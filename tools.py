@@ -55,7 +55,7 @@ def VQA_tool(info:dict) -> str:
     print("Complete result from VQA tool: ",res)
     match = re.search(r"Answer:\s*(.*)", res)
 
-# 检查是否找到匹配项并提取
+
     if match:
         res = match.group(1)
     # res="The current object is "+obj+ ". I have already used tool 'VQA_tool' to process it."
@@ -629,26 +629,3 @@ def create_agents(state):
     # print("tool_selected: ",tool_selected)
     return {"next":tool_selected}
 
-
-#     prompt = ChatPromptTemplate.from_messages([
-#         ("system", '''
-#     AI assistant should help select one correct tool to solve VQA question depending on the description of tools and the question. /
-# Tools Descriptions:
-#          "VQA-tool": "If there is no left or right in the 
-#          '''),
-#         ("human", '''The question is "{question}". The context is "{context}". What is the answer?'''),
-#     ])
-#     llm = ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0)#gpt-3.5-turbol
-#     ans=(prompt|llm|StrOutputParser()).invoke( {
-#             "question": question,
-#             "context": context,
-#         })
-
-
-    # new_state ['Context'].append(f"Context: {state['Context'][0].content}")
-    # new_state ['Subquestions'].append(f"Subquestions: {state['Subquestions'][0].content}")
-    # new_state ['Image'].append(f"Image: {state['Image'][0].content}")
-    # new_state ['Entity'].append(f"Entity: {state['Entity'][0].content}")
-    # new_state ['question_type'].append(f"question_type: {state['question_type'][0].content}")
-    # new_state ['obj_dict'].append(f"obj_dict: {state['obj_dict'][0].content}")
-    # new_state ['axis_dict'].append(f"axis_dict: {state['axis_dict'][0].content}")
