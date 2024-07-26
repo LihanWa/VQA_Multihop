@@ -20,11 +20,16 @@ def call_Face_recognition_tool(state):
 
 
 def call_KB_tool(state):
+    print("state in kb tool: ",state)
+    print((state['Question']))
+    print((state['Question'][0].content))
+    print(type(str(state['Question'].content[0])))
     action = ToolInvocation(
         tool='a',
         # tool_input=json.loads('{"obj":"Einstein"}'),
-        tool_input=json.loads('{"obj":"bilibili"}'),
+        tool_input={'question':str(state['Question'][0])},
     )
+    print("come to call kb tool")
     response = tool_executor.invoke(action)#函数返回值
     function_message = FunctionMessage(content=str(response), name=action.tool)
     return {"Tool_return": [function_message]}
@@ -54,6 +59,25 @@ def call_Identify_object_tool(state):
     function_message = FunctionMessage(content=str(response), name=action.tool)
     return {"Tool_return": [function_message]}
 
+def call_Identify_color_tool(state):
+    action = ToolInvocation(
+        tool='f',
+        tool_input=json.loads('{"image_part":"a part"}'),
+    )
+    response = tool_executor.invoke(action)#函数返回值
+    function_message = FunctionMessage(content=str(response), name=action.tool)
+    return {"Tool_return": [function_message]}
+
+def call_Identify_space_relation_tool(state):
+    action = ToolInvocation(
+        tool='g',
+        tool_input=json.loads('{"image_part":"a part"}'),
+    )
+    response = tool_executor.invoke(action)#函数返回值
+    function_message = FunctionMessage(content=str(response), name=action.tool)
+    return {"Tool_return": [function_message]}
+
+
 llm = ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0)#gpt-3.5-turbol
 system_prompt = (
     "You are a helpful AI assistant, and you should mainly depend on the Question, Previously used tools and The corresponded return value of the tools to make decisions."
@@ -61,7 +85,7 @@ system_prompt = (
     " If you don't want to use any tools, it's OK and you should choose FINISH. And it is better than selecting useless tools."
 )
 # options=["a","b","c","d","FINISH"]
-options=["a","b","c","d","e","FINISH"]
+options=["a","b","c","d","e","f","g","FINISH"]
 prompt = ChatPromptTemplate.from_messages([
     SystemMessage(content=system_prompt),
     MessagesPlaceholder(variable_name="Question"),
@@ -76,7 +100,7 @@ prompt = ChatPromptTemplate.from_messages([
     # " If you have used a tool in this task, you should not use the same tool again, because the tool will always gives the same answer for the same question."
     " If you have used a tool in this task, you should not use the same tool again."
     " So even you can't solve the promblem or can't get a satisfying answer (For example, the returned answer of tool is 'do not know, not clear'), you should not use the same tool again."
-    " Given the conversation above, who should act next? Or should we FINISH? Select one of: {options}"),
+    " Given the conversation above, who should act next? Or should we FINISH? Select one of: {options} (The output should be one of the elements in the options)"),
 ]).partial(options=str(options))
 
 agent = create_openai_tools_agent(llm, tools, prompt)
