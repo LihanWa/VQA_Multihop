@@ -1,0 +1,1402 @@
+[
+    {
+        "id": 1,
+        "Label": "boy",
+        "Logit": "boy",
+        "Q": "Who is playing?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/0_n126891.jpg"
+    },
+    {
+        "id": 2,
+        "Label": "blue",
+        "Logit": "black",
+        "Q": "The open umbrella is of what color?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/1_n184551.jpg"
+    },
+    {
+        "id": 3,
+        "Label": "desk",
+        "Logit": "bookcase",
+        "Q": "Which item of furniture is large, the bookcase or the desk?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/2_n520071.jpg"
+    },
+    {
+        "id": 4,
+        "Label": "shelf",
+        "Logit": "shelf",
+        "Q": "What is the type of the piece of furniture that is made of the same material as the spoon to the left of her?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/3_n433532.jpg"
+    },
+    {
+        "id": 5,
+        "Label": "athlete",
+        "Logit": "none",
+        "Q": "Who is wearing the wristband?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/4_n496803.jpg"
+    },
+    {
+        "id": 6,
+        "Label": "no",
+        "Logit": "no",
+        "Q": "Is the basket behind a train?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/5_n290409.jpg"
+    },
+    {
+        "id": 7,
+        "Label": "zebras",
+        "Logit": "zebra",
+        "Q": "What kind of animal is above the grass?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/6_n196058.jpg"
+    },
+    {
+        "id": 8,
+        "Label": "reading",
+        "Logit": "reading",
+        "Q": "Does the person next to the woman appear to be sleeping or reading?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/7_n184551.jpg"
+    },
+    {
+        "id": 9,
+        "Label": "chairs",
+        "Logit": "stool",
+        "Q": "Which kind of furniture is tall?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/8_n283587.jpg"
+    },
+    {
+        "id": 10,
+        "Label": "large",
+        "Logit": "small",
+        "Q": "How big is the vehicle on the right?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/9_n206358.jpg"
+    },
+    {
+        "id": 11,
+        "Label": "yellow",
+        "Logit": "yellow",
+        "Q": "Which color is the curtain to the right of the picture?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/10_n192021.jpg"
+    },
+    {
+        "id": 12,
+        "Label": "doors",
+        "Logit": "building",
+        "Q": "What are the stairs in front of?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/11_n346247.jpg"
+    },
+    {
+        "id": 13,
+        "Label": "no",
+        "Logit": "no",
+        "Q": "Is that woman to the left of a bag?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/12_n160664.jpg"
+    },
+    {
+        "id": 14,
+        "Label": "bowl",
+        "Logit": "liner",
+        "Q": "What are the beans inside of?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/13_n296467.jpg"
+    },
+    {
+        "id": 15,
+        "Label": "yes",
+        "Logit": "yes",
+        "Q": "Do you see any lamps or mirrors there?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/14_n446242.jpg"
+    },
+    {
+        "id": 16,
+        "Label": "television",
+        "Logit": "television",
+        "Q": "What type of device is to the right of the speaker?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/15_n77818.jpg"
+    },
+    {
+        "id": 17,
+        "Label": "wet",
+        "Logit": "dry",
+        "Q": "Is the sidestand made of concrete dry or wet?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/16_n514467.jpg"
+    },
+    {
+        "id": 18,
+        "Label": "batter",
+        "Logit": "batter",
+        "Q": "Who is in front of the person that is crouching?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/17_n130638.jpg"
+    },
+    {
+        "id": 19,
+        "Label": "no",
+        "Logit": "no",
+        "Q": "Is the color of the jeans the same as the sneakers?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/18_n65202.jpg"
+    },
+    {
+        "id": 20,
+        "Label": "elephant",
+        "Logit": "elephant",
+        "Q": "Which kind of animal is it?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/19_n59627.jpg"
+    },
+    {
+        "id": 21,
+        "Label": "yes",
+        "Logit": "yes",
+        "Q": "Is the building different in color than the sign?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/20_n313060.jpg"
+    },
+    {
+        "id": 22,
+        "Label": "left",
+        "Logit": "left",
+        "Q": "Is the old woman to the right or to the left of the man near the giraffe?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/21_n160664.jpg"
+    },
+    {
+        "id": 23,
+        "Label": "right",
+        "Logit": "left",
+        "Q": "Which side is the man on?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/22_n260762.jpg"
+    },
+    {
+        "id": 24,
+        "Label": "yes",
+        "Logit": "yes",
+        "Q": "Are the pants blue?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/23_n202379.jpg"
+    },
+    {
+        "id": 25,
+        "Label": "trees",
+        "Logit": "land",
+        "Q": "What is on the mountains?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/24_n207893.jpg"
+    },
+    {
+        "id": 26,
+        "Label": "no",
+        "Logit": "no",
+        "Q": "Is the helmet made of the same material as the bench?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/25_n531731.jpg"
+    },
+    {
+        "id": 27,
+        "Label": "resting",
+        "Logit": "bending resting",
+        "Q": "Is the person that is bending resting or reading?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/26_n151768.jpg"
+    },
+    {
+        "id": 28,
+        "Label": "boxes",
+        "Logit": "panels",
+        "Q": "What is standing against the red bricks?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/27_n445353.jpg"
+    },
+    {
+        "id": 29,
+        "Label": "plastic",
+        "Logit": "metal",
+        "Q": "What is the bottle cap made of?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/28_n357784.jpg"
+    },
+    {
+        "id": 30,
+        "Label": "liquor",
+        "Logit": "beer",
+        "Q": "What drink is the cup full of?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/29_n37274.jpg"
+    },
+    {
+        "id": 31,
+        "Label": "bus",
+        "Logit": "bus",
+        "Q": "What vehicle is the telephone pole behind of, a train or a bus?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/30_n16425.jpg"
+    },
+    {
+        "id": 32,
+        "Label": "white",
+        "Logit": "white",
+        "Q": "What color do you think these curtains are?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/31_n125122.jpg"
+    },
+    {
+        "id": 33,
+        "Label": "house",
+        "Logit": "structure",
+        "Q": "What is sitting beside the appliance that is beside the knives?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/32_n314630.jpg"
+    },
+    {
+        "id": 34,
+        "Label": "pink",
+        "Logit": "gold",
+        "Q": "Which color does the lamp made of metal have?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/33_n233607.jpg"
+    },
+    {
+        "id": 35,
+        "Label": "driver",
+        "Logit": "man",
+        "Q": "Who is driving the motorcycle?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/34_n501951.jpg"
+    },
+    {
+        "id": 36,
+        "Label": "dry",
+        "Logit": "ground dry",
+        "Q": "Is the ground dry or wet?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/35_n100552.jpg"
+    },
+    {
+        "id": 37,
+        "Label": "yes",
+        "Logit": "yes",
+        "Q": "Is the soccer player in front of the goal watching the ball?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/36_n259002.jpg"
+    },
+    {
+        "id": 38,
+        "Label": "fries",
+        "Logit": "fries",
+        "Q": "Which kind of fast food is to the right of the mug?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/37_n55058.jpg"
+    },
+    {
+        "id": 39,
+        "Label": "potato",
+        "Logit": "radish",
+        "Q": "What is the vegetable that is the same shape as the stove top called?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/38_n184385.jpg"
+    },
+    {
+        "id": 40,
+        "Label": "stove",
+        "Logit": "stove",
+        "Q": "What appliance is below the oil near the wine?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/39_n433532.jpg"
+    },
+    {
+        "id": 41,
+        "Label": "pasture",
+        "Logit": "pasture",
+        "Q": "Which is larger, the pasture or the horse?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/40_n324908.jpg"
+    },
+    {
+        "id": 42,
+        "Label": "striped",
+        "Logit": "striped",
+        "Q": "What is the pattern of the towel?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/41_n209843.jpg"
+    },
+    {
+        "id": 43,
+        "Label": "mat",
+        "Logit": "coaster",
+        "Q": "What is the glass made of glass sitting on?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/42_n222915.jpg"
+    },
+    {
+        "id": 44,
+        "Label": "coffee table",
+        "Logit": "table",
+        "Q": "What is in front of the couch made of cloth?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/43_n181355.jpg"
+    },
+    {
+        "id": 45,
+        "Label": "skier",
+        "Logit": "skier",
+        "Q": "Who is skiing?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/44_n143672.jpg"
+    },
+    {
+        "id": 46,
+        "Label": "woman",
+        "Logit": "man",
+        "Q": "Who wears a shirt?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/45_n451187.jpg"
+    },
+    {
+        "id": 47,
+        "Label": "looking down",
+        "Logit": "looking down",
+        "Q": "Does the person that is sitting appear to be posing or looking down?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/46_n278453.jpg"
+    },
+    {
+        "id": 48,
+        "Label": "yes",
+        "Logit": "yes",
+        "Q": "Does the oven have a different color than the stove?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/47_n501609.jpg"
+    },
+    {
+        "id": 49,
+        "Label": "map",
+        "Logit": "map",
+        "Q": "What is leaning against the glass window?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/48_n69237.jpg"
+    },
+    {
+        "id": 50,
+        "Label": "chicken",
+        "Logit": "chicken",
+        "Q": "What do you think is the crispy meat?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/49_n181210.jpg"
+    },
+    {
+        "id": 51,
+        "Label": "boy",
+        "Logit": "girl",
+        "Q": "Who is holding the baseball mitt?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/50_n356822.jpg"
+    },
+    {
+        "id": 52,
+        "Label": "no",
+        "Logit": "no",
+        "Q": "Are there both notebooks and cans in the scene?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/51_n119944.jpg"
+    },
+    {
+        "id": 53,
+        "Label": "pillow",
+        "Logit": "table",
+        "Q": "What is the man to the left of the woman sitting in front of?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/52_n181355.jpg"
+    },
+    {
+        "id": 54,
+        "Label": "yes",
+        "Logit": "yes",
+        "Q": "Is the black speaker both little and narrow?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/53_n513429.jpg"
+    },
+    {
+        "id": 55,
+        "Label": "no",
+        "Logit": "no",
+        "Q": "Are the trousers short and dark?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/54_n92308.jpg"
+    },
+    {
+        "id": 56,
+        "Label": "no",
+        "Logit": "no",
+        "Q": "Are there red tables or ottomen?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/55_n369313.jpg"
+    },
+    {
+        "id": 57,
+        "Label": "yes",
+        "Logit": "yes",
+        "Q": "Is the doll to the right of the ladder made of plastic?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/56_n89148.jpg"
+    },
+    {
+        "id": 58,
+        "Label": "yes",
+        "Logit": "yes",
+        "Q": "Does the jersey have the same color as the cap?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/57_n98540.jpg"
+    },
+    {
+        "id": 59,
+        "Label": "top",
+        "Logit": "top",
+        "Q": "In which part are the glasses, the top or the bottom?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/58_n470920.jpg"
+    },
+    {
+        "id": 60,
+        "Label": "no",
+        "Logit": "no",
+        "Q": "Do the shelves look brown and short?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/59_n326988.jpg"
+    },
+    {
+        "id": 61,
+        "Label": "yes",
+        "Logit": "yes",
+        "Q": "Is the coat white and long sleeved?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/60_n382416.jpg"
+    },
+    {
+        "id": 62,
+        "Label": "no",
+        "Logit": "no",
+        "Q": "Are the trees near the rock short and green?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/61_n187961.jpg"
+    },
+    {
+        "id": 63,
+        "Label": "yes",
+        "Logit": "yes",
+        "Q": "Is the sky clear?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/62_n46510.jpg"
+    },
+    {
+        "id": 64,
+        "Label": "no",
+        "Logit": "yes",
+        "Q": "Is the curtain to the left of a pillow?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/63_n357784.jpg"
+    },
+    {
+        "id": 65,
+        "Label": "no",
+        "Logit": "no",
+        "Q": "Does the polo shirt look white and short sleeved?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/64_n413319.jpg"
+    },
+    {
+        "id": 66,
+        "Label": "plastic",
+        "Logit": "metal",
+        "Q": "Which material is the laptop near the glass made of?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/65_n355339.jpg"
+    },
+    {
+        "id": 67,
+        "Label": "countertop",
+        "Logit": "sink",
+        "Q": "What is the soap dispenser sitting on?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/66_n473688.jpg"
+    },
+    {
+        "id": 68,
+        "Label": "no",
+        "Logit": "no",
+        "Q": "Does the toy above the girl look small and white?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/67_n89148.jpg"
+    },
+    {
+        "id": 69,
+        "Label": "material",
+        "Logit": "fixtures",
+        "Q": "What do the faucet and the light fixture have in common?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/68_n240666.jpg"
+    },
+    {
+        "id": 70,
+        "Label": "flowers",
+        "Logit": "umbrella",
+        "Q": "What is located on top of the woman in the middle?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/69_n470920.jpg"
+    },
+    {
+        "id": 71,
+        "Label": "no",
+        "Logit": "yes",
+        "Q": "Are there beds or lamps in the picture?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/70_n275148.jpg"
+    },
+    {
+        "id": 72,
+        "Label": "left",
+        "Logit": "left",
+        "Q": "Is she to the left or to the right of the pillow that looks soft?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/71_n233607.jpg"
+    },
+    {
+        "id": 73,
+        "Label": "dresser",
+        "Logit": "bed",
+        "Q": "What item of furniture is not small?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/72_n49438.jpg"
+    },
+    {
+        "id": 74,
+        "Label": "small",
+        "Logit": "small",
+        "Q": "How big is the flower on the surfboard?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/73_n298104.jpg"
+    },
+    {
+        "id": 75,
+        "Label": "yes",
+        "Logit": "no",
+        "Q": "Is the mouse to the left of a keyboard?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/74_n264887.jpg"
+    },
+    {
+        "id": 76,
+        "Label": "yes",
+        "Logit": "yes",
+        "Q": "Are there any men to the left of the vegetable that is not rotten?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/75_n151768.jpg"
+    },
+    {
+        "id": 77,
+        "Label": "napkin",
+        "Logit": "frame",
+        "Q": "What are the flowers in front of?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/76_n28572.jpg"
+    },
+    {
+        "id": 78,
+        "Label": "yes",
+        "Logit": "yes",
+        "Q": "Is the color of the ceiling different than the plate?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/77_n68769.jpg"
+    },
+    {
+        "id": 79,
+        "Label": "yes",
+        "Logit": "yes",
+        "Q": "Does the notebook which is to the left of the napkin look black and closed?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/78_n403734.jpg"
+    },
+    {
+        "id": 80,
+        "Label": "metal",
+        "Logit": "metal",
+        "Q": "What is the fence made of?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/79_n574498.jpg"
+    },
+    {
+        "id": 81,
+        "Label": "no",
+        "Logit": "no",
+        "Q": "Is there a computer or a wii controller in this photo?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/80_n246334.jpg"
+    },
+    {
+        "id": 82,
+        "Label": "couch",
+        "Logit": "sofa",
+        "Q": "What kind of furniture is long?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/81_n526228.jpg"
+    },
+    {
+        "id": 83,
+        "Label": "female",
+        "Logit": "unknown",
+        "Q": "What is the gender of the skateboarder to the right of the lamp?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/82_n472825.jpg"
+    },
+    {
+        "id": 84,
+        "Label": "deer",
+        "Logit": "deer",
+        "Q": "What animal stands at the grass?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/83_n219840.jpg"
+    },
+    {
+        "id": 85,
+        "Label": "sink",
+        "Logit": "mirror",
+        "Q": "What is the man in front of?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/84_n54180.jpg"
+    },
+    {
+        "id": 86,
+        "Label": "man",
+        "Logit": "person",
+        "Q": "Who is standing behind the trash can?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/85_n79078.jpg"
+    },
+    {
+        "id": 87,
+        "Label": "no",
+        "Logit": "no",
+        "Q": "Is the road near the building dark and narrow?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/86_n206358.jpg"
+    },
+    {
+        "id": 88,
+        "Label": "strawberry",
+        "Logit": "cake",
+        "Q": "The whipped cream is in front of what?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/87_n437064.jpg"
+    },
+    {
+        "id": 89,
+        "Label": "computer mouse",
+        "Logit": "monitor",
+        "Q": "Which kind of device is the keyboard sitting next to?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/88_n435808.jpg"
+    },
+    {
+        "id": 90,
+        "Label": "skater",
+        "Logit": "person",
+        "Q": "Who is standing?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/89_n299528.jpg"
+    },
+    {
+        "id": 91,
+        "Label": "no",
+        "Logit": "no",
+        "Q": "Do you see fire hydrants on top of the sidestand that is not dry?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/90_n514467.jpg"
+    },
+    {
+        "id": 92,
+        "Label": "motorcycle",
+        "Logit": "motorcycle",
+        "Q": "What is the driver driving?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/91_n501951.jpg"
+    },
+    {
+        "id": 93,
+        "Label": "no",
+        "Logit": "no",
+        "Q": "Is the bat that looks gray and red made of wood?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/92_n117888.jpg"
+    },
+    {
+        "id": 94,
+        "Label": "pillows",
+        "Logit": "pillows",
+        "Q": "Are these pillows or towels?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/93_n432591.jpg"
+    },
+    {
+        "id": 95,
+        "Label": "blond",
+        "Logit": "blond",
+        "Q": "Do you think the person that looks young is blond or brunette?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/94_n511913.jpg"
+    },
+    {
+        "id": 96,
+        "Label": "yes",
+        "Logit": "no",
+        "Q": "Is the light fixture made of the same material as the stop sign?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/95_n324644.jpg"
+    },
+    {
+        "id": 97,
+        "Label": "small",
+        "Logit": "small",
+        "Q": "How big is the bath tub?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/96_n95369.jpg"
+    },
+    {
+        "id": 98,
+        "Label": "asphalt",
+        "Logit": "road",
+        "Q": "What material is the road, asphalt or cobblestone?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/97_n24526.jpg"
+    },
+    {
+        "id": 99,
+        "Label": "top",
+        "Logit": "top",
+        "Q": "Is the towel in the top or in the bottom of the image?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/98_n531731.jpg"
+    },
+    {
+        "id": 100,
+        "Label": "orange",
+        "Logit": "white",
+        "Q": "What is the color of the appliance made of plastic?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/99_n64959.jpg"
+    },
+    {
+        "id": 101,
+        "Label": "cupcakes",
+        "Logit": "cupcake",
+        "Q": "What dessert is fresh?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/100_n296467.jpg"
+    },
+    {
+        "id": 102,
+        "Label": "cords",
+        "Logit": "charger",
+        "Q": "What do you think is plugged into the outlets that are made of wood?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/101_n357784.jpg"
+    },
+    {
+        "id": 103,
+        "Label": "talking",
+        "Logit": "posing",
+        "Q": "Does the person to the left of the other person seem to be talking or posing?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/102_n445353.jpg"
+    },
+    {
+        "id": 104,
+        "Label": "yes",
+        "Logit": "yes",
+        "Q": "Is there a pot beside the motorbike that is above the stone?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/103_n62458.jpg"
+    },
+    {
+        "id": 105,
+        "Label": "keyboard",
+        "Logit": "all",
+        "Q": "Which kind of device is not electronic?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/104_n513429.jpg"
+    },
+    {
+        "id": 106,
+        "Label": "yes",
+        "Logit": "yes",
+        "Q": "Is the teddy bear brown?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/105_n65885.jpg"
+    },
+    {
+        "id": 107,
+        "Label": "sign",
+        "Logit": "surfboard",
+        "Q": "What is the thin person standing behind of?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/106_n298104.jpg"
+    },
+    {
+        "id": 108,
+        "Label": "caucasian",
+        "Logit": "unknown",
+        "Q": "Of what race is the man the skateboard is to the right of?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/107_n526228.jpg"
+    },
+    {
+        "id": 109,
+        "Label": "right",
+        "Logit": "left",
+        "Q": "On which side is the doll?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/108_n326988.jpg"
+    },
+    {
+        "id": 110,
+        "Label": "man",
+        "Logit": "woman",
+        "Q": "Who is sitting beside the boy?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/109_n71728.jpg"
+    },
+    {
+        "id": 111,
+        "Label": "zebra",
+        "Logit": "zebra",
+        "Q": "What animal is standing behind the horses?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/110_n219840.jpg"
+    },
+    {
+        "id": 112,
+        "Label": "picture frame",
+        "Logit": "picture",
+        "Q": "What is around the dark picture?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/111_n6908.jpg"
+    },
+    {
+        "id": 113,
+        "Label": "skater",
+        "Logit": "man",
+        "Q": "Who rides on the skateboard?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/112_n299528.jpg"
+    },
+    {
+        "id": 114,
+        "Label": "policeman",
+        "Logit": "police",
+        "Q": "Who is sitting atop the motorbike on the left?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/113_n471866.jpg"
+    },
+    {
+        "id": 115,
+        "Label": "oil",
+        "Logit": "bowls",
+        "Q": "What is larger than the drink that is in the top?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/114_n433532.jpg"
+    },
+    {
+        "id": 116,
+        "Label": "wine",
+        "Logit": "shakers",
+        "Q": "What is the oil bigger than?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/115_n433532.jpg"
+    },
+    {
+        "id": 117,
+        "Label": "yes",
+        "Logit": "yes",
+        "Q": "Does that luggage look still?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/116_n498712.jpg"
+    },
+    {
+        "id": 118,
+        "Label": "no",
+        "Logit": "no",
+        "Q": "Is the floor rough and black?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/117_n500308.jpg"
+    },
+    {
+        "id": 119,
+        "Label": "small",
+        "Logit": "small",
+        "Q": "How large is the onion to the left of the serving dish?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/118_n55058.jpg"
+    },
+    {
+        "id": 120,
+        "Label": "yes",
+        "Logit": "yes",
+        "Q": "Do the shoes look dark?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/119_n262929.jpg"
+    },
+    {
+        "id": 121,
+        "Label": "staring",
+        "Logit": "walking",
+        "Q": "What's the elephant doing?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/120_n119944.jpg"
+    },
+    {
+        "id": 122,
+        "Label": "traffic sign",
+        "Logit": "left",
+        "Q": "Which kind of sign is on the road?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/121_n124651.jpg"
+    },
+    {
+        "id": 123,
+        "Label": "small",
+        "Logit": "small",
+        "Q": "How big is the chair that is made of wood?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/122_n69237.jpg"
+    },
+    {
+        "id": 124,
+        "Label": "girl",
+        "Logit": "girl",
+        "Q": "Who is the boy sitting next to?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/123_n356822.jpg"
+    },
+    {
+        "id": 125,
+        "Label": "elephant",
+        "Logit": "elephant",
+        "Q": "What is the animal that the male person looks at?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/124_n119944.jpg"
+    },
+    {
+        "id": 126,
+        "Label": "chair",
+        "Logit": "chairs",
+        "Q": "What kind of furniture is underneath the white table?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/125_n513100.jpg"
+    },
+    {
+        "id": 127,
+        "Label": "batter",
+        "Logit": "player",
+        "Q": "Who wears trousers?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/126_n570181.jpg"
+    },
+    {
+        "id": 128,
+        "Label": "clean",
+        "Logit": "clean",
+        "Q": "How clean is the t-shirt?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/127_n282607.jpg"
+    },
+    {
+        "id": 129,
+        "Label": "machine",
+        "Logit": "dispenser",
+        "Q": "What's located on top of the table?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/128_n256120.jpg"
+    },
+    {
+        "id": 130,
+        "Label": "yes",
+        "Logit": "yes",
+        "Q": "Do you see any people to the right of the dog?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/129_n411121.jpg"
+    },
+    {
+        "id": 131,
+        "Label": "left",
+        "Logit": "left",
+        "Q": "Is she to the left or to the right of the bottle that looks heavy?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/130_n579256.jpg"
+    },
+    {
+        "id": 132,
+        "Label": "cars",
+        "Logit": "car",
+        "Q": "What vehicles is the woman behind of?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/131_n400036.jpg"
+    },
+    {
+        "id": 133,
+        "Label": "yes",
+        "Logit": "yes",
+        "Q": "Do you think this fence is straight?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/132_n202379.jpg"
+    },
+    {
+        "id": 134,
+        "Label": "striped",
+        "Logit": "striped",
+        "Q": "What is the pattern of the shirt?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/133_n527290.jpg"
+    },
+    {
+        "id": 135,
+        "Label": "porcelain",
+        "Logit": "acrylic",
+        "Q": "What do you think the bath tub is made of?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/134_n65866.jpg"
+    },
+    {
+        "id": 136,
+        "Label": "large",
+        "Logit": "large",
+        "Q": "The covered window is what size?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/135_n525901.jpg"
+    },
+    {
+        "id": 137,
+        "Label": "yes",
+        "Logit": "yes",
+        "Q": "Do you see either a kid or a skateboarder there?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/136_n412144.jpg"
+    },
+    {
+        "id": 138,
+        "Label": "male",
+        "Logit": "male",
+        "Q": "What is the gender of the person that wears a hat?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/137_n441859.jpg"
+    },
+    {
+        "id": 139,
+        "Label": "yes",
+        "Logit": "yes",
+        "Q": "Is the pipe that looks white tall and thin?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/138_n119886.jpg"
+    },
+    {
+        "id": 140,
+        "Label": "right",
+        "Logit": "left",
+        "Q": "Is the round bowl to the left or to the right of the man on the left?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/139_n71728.jpg"
+    },
+    {
+        "id": 141,
+        "Label": "bench",
+        "Logit": "window",
+        "Q": "What is the table in front of?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/140_n398429.jpg"
+    },
+    {
+        "id": 142,
+        "Label": "small",
+        "Logit": "small",
+        "Q": "Is the white animal small or large?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/141_n331357.jpg"
+    },
+    {
+        "id": 143,
+        "Label": "no",
+        "Logit": "no",
+        "Q": "Is there a truck in the street?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/142_n486200.jpg"
+    },
+    {
+        "id": 144,
+        "Label": "brown",
+        "Logit": "brown",
+        "Q": "What is the color of the umbrella to the left of the other umbrella?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/143_n28792.jpg"
+    },
+    {
+        "id": 145,
+        "Label": "right",
+        "Logit": "right",
+        "Q": "On which side of the image is the fork?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/144_n312206.jpg"
+    },
+    {
+        "id": 146,
+        "Label": "left",
+        "Logit": "left",
+        "Q": "Is the umpire to the left or to the right of the person that holds the racket?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/145_n573460.jpg"
+    },
+    {
+        "id": 147,
+        "Label": "gold",
+        "Logit": "gold",
+        "Q": "Are the glasses that are to the right of the remote control black or gold?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/146_n326988.jpg"
+    },
+    {
+        "id": 148,
+        "Label": "cloth",
+        "Logit": "cloth",
+        "Q": "Which material is the white bed made of, cloth or leather?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/147_n293477.jpg"
+    },
+    {
+        "id": 149,
+        "Label": "top",
+        "Logit": "top",
+        "Q": "Is the fried food in the top or in the bottom part?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/148_n534106.jpg"
+    },
+    {
+        "id": 150,
+        "Label": "no",
+        "Logit": "yes",
+        "Q": "Does the appliance behind the table have black color?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/149_n118102.jpg"
+    },
+    {
+        "id": 151,
+        "Label": "no",
+        "Logit": "yes",
+        "Q": "Is the sink below a mirror?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/150_n310625.jpg"
+    },
+    {
+        "id": 152,
+        "Label": "small",
+        "Logit": "medium-sized",
+        "Q": "The hat is what size?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/151_n450919.jpg"
+    },
+    {
+        "id": 153,
+        "Label": "policeman",
+        "Logit": "police",
+        "Q": "Who is sitting?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/152_n471866.jpg"
+    },
+    {
+        "id": 154,
+        "Label": "no",
+        "Logit": "no",
+        "Q": "Are there either any chickens or trash cans in this picture?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/153_n473688.jpg"
+    },
+    {
+        "id": 155,
+        "Label": "surfboard",
+        "Logit": "surfboard",
+        "Q": "What is the flower on?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/154_n298104.jpg"
+    },
+    {
+        "id": 156,
+        "Label": "blue",
+        "Logit": "blue",
+        "Q": "What color is the shirt?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/155_n200907.jpg"
+    },
+    {
+        "id": 157,
+        "Label": "no",
+        "Logit": "yes",
+        "Q": "Do the tall windows have white color?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/156_n324644.jpg"
+    },
+    {
+        "id": 158,
+        "Label": "gray",
+        "Logit": "grey",
+        "Q": "Which color do you think the floor has?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/157_n98544.jpg"
+    },
+    {
+        "id": 159,
+        "Label": "yes",
+        "Logit": "yes",
+        "Q": "Are the napkin and the plate the same color?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/158_n312206.jpg"
+    },
+    {
+        "id": 160,
+        "Label": "plastic",
+        "Logit": "plastic",
+        "Q": "Of what material the toilet brush?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/159_n415215.jpg"
+    },
+    {
+        "id": 161,
+        "Label": "yes",
+        "Logit": "no",
+        "Q": "Does the grassy field look brown?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/160_n485969.jpg"
+    },
+    {
+        "id": 162,
+        "Label": "no",
+        "Logit": "yes",
+        "Q": "Are the flag and the fire truck the same color?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/161_n309148.jpg"
+    },
+    {
+        "id": 163,
+        "Label": "dress shirt",
+        "Logit": "fancy",
+        "Q": "Which kind of clothing isn't fancy?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/162_n234683.jpg"
+    },
+    {
+        "id": 164,
+        "Label": "no",
+        "Logit": "yes",
+        "Q": "Do you see either a spoon or a fork that are made of plastic?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/163_n184385.jpg"
+    },
+    {
+        "id": 165,
+        "Label": "yes",
+        "Logit": "yes",
+        "Q": "Does the clear sky look blue?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/164_n208458.jpg"
+    },
+    {
+        "id": 166,
+        "Label": "yes",
+        "Logit": "yes",
+        "Q": "Do the trees appear to be green?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/165_n497658.jpg"
+    },
+    {
+        "id": 167,
+        "Label": "rectangular",
+        "Logit": "rectangular",
+        "Q": "Which shape is the swimming pool below the man?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/166_n222297.jpg"
+    },
+    {
+        "id": 168,
+        "Label": "horse",
+        "Logit": "horse",
+        "Q": "What animal is standing against the fence made of wood?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/167_n216553.jpg"
+    },
+    {
+        "id": 169,
+        "Label": "desk",
+        "Logit": "furniture",
+        "Q": "How is the piece of furniture below the mirror the television is to the right of called?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/168_n125122.jpg"
+    },
+    {
+        "id": 170,
+        "Label": "yes",
+        "Logit": "no",
+        "Q": "Is the road rocky?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/169_n413761.jpg"
+    },
+    {
+        "id": 171,
+        "Label": "narrow",
+        "Logit": "not",
+        "Q": "What is the width of the window?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/170_n278312.jpg"
+    },
+    {
+        "id": 172,
+        "Label": "cloth",
+        "Logit": "cloth",
+        "Q": "What is the jacket made of, cloth or leather?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/171_n483840.jpg"
+    },
+    {
+        "id": 173,
+        "Label": "no",
+        "Logit": "no",
+        "Q": "Is there a pink umbrella in the picture?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/172_n507959.jpg"
+    },
+    {
+        "id": 174,
+        "Label": "yes",
+        "Logit": "no",
+        "Q": "Are both the chair and the soccer ball the same color?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/173_n350732.jpg"
+    },
+    {
+        "id": 175,
+        "Label": "no",
+        "Logit": "yes",
+        "Q": "Is the color of the bottle different than the napkin?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/174_n403734.jpg"
+    },
+    {
+        "id": 176,
+        "Label": "donuts",
+        "Logit": "donuts",
+        "Q": "How is the glazed food called?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/175_n272098.jpg"
+    },
+    {
+        "id": 177,
+        "Label": "yes",
+        "Logit": "yes",
+        "Q": "Is the bed still?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/176_n23181.jpg"
+    },
+    {
+        "id": 178,
+        "Label": "jacket",
+        "Logit": "robe",
+        "Q": "What kind of clothing is hanging?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/177_n95313.jpg"
+    },
+    {
+        "id": 179,
+        "Label": "no",
+        "Logit": "no",
+        "Q": "Is the kite to the right of the girl round and small?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/178_n172618.jpg"
+    },
+    {
+        "id": 180,
+        "Label": "no",
+        "Logit": "yes",
+        "Q": "Is the man to the left of the crate holding beer?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/179_n37274.jpg"
+    },
+    {
+        "id": 181,
+        "Label": "no",
+        "Logit": "yes",
+        "Q": "Is the young boy wearing a jacket?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/180_n126891.jpg"
+    },
+    {
+        "id": 182,
+        "Label": "skater",
+        "Logit": "skateboarder",
+        "Q": "Who in the picture is looking down?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/181_n258500.jpg"
+    },
+    {
+        "id": 183,
+        "Label": "table",
+        "Logit": "table",
+        "Q": "What piece of furniture is the plate sitting atop?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/182_n336443.jpg"
+    },
+    {
+        "id": 184,
+        "Label": "yes",
+        "Logit": "yes",
+        "Q": "Is the red bench below a painting?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/183_n398429.jpg"
+    },
+    {
+        "id": 185,
+        "Label": "caucasian",
+        "Logit": "unknown",
+        "Q": "What is the ethnicity of the man near the plants?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/184_n350732.jpg"
+    },
+    {
+        "id": 186,
+        "Label": "no",
+        "Logit": "no",
+        "Q": "Do the pants look beige and wet?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/185_n39114.jpg"
+    },
+    {
+        "id": 187,
+        "Label": "no",
+        "Logit": "yes",
+        "Q": "Is the device to the left of the water bottle small and black?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/186_n159802.jpg"
+    },
+    {
+        "id": 188,
+        "Label": "desk",
+        "Logit": "sofa",
+        "Q": "What is the item of furniture that is made of same material as the storage box that is not empty called?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/187_n275148.jpg"
+    },
+    {
+        "id": 189,
+        "Label": "yes",
+        "Logit": "yes",
+        "Q": "Are there fences to the right of the bus in the middle of the picture?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/188_n173807.jpg"
+    },
+    {
+        "id": 190,
+        "Label": "rectangular",
+        "Logit": "rectangular",
+        "Q": "What shape is the chair that looks white?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/189_n192021.jpg"
+    },
+    {
+        "id": 191,
+        "Label": "left",
+        "Logit": "left",
+        "Q": "Which side is the helmet on?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/190_n279581.jpg"
+    },
+    {
+        "id": 192,
+        "Label": "yes",
+        "Logit": "yes",
+        "Q": "Does the elephant appear to be standing?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/191_n119944.jpg"
+    },
+    {
+        "id": 193,
+        "Label": "motorcycle",
+        "Logit": "motorcycle",
+        "Q": "What's the person riding?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/192_n390187.jpg"
+    },
+    {
+        "id": 194,
+        "Label": "yes",
+        "Logit": "no",
+        "Q": "Is the cheese that is to the right of the spoon small and round?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/193_n28996.jpg"
+    },
+    {
+        "id": 195,
+        "Label": "zebra",
+        "Logit": "zebra",
+        "Q": "Which kind of animal is small?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/194_n196058.jpg"
+    },
+    {
+        "id": 196,
+        "Label": "yes",
+        "Logit": "yes",
+        "Q": "Is the pasture open and grassy?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/195_n143935.jpg"
+    },
+    {
+        "id": 197,
+        "Label": "man",
+        "Logit": "man",
+        "Q": "Who do you think wears glasses?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/196_n470920.jpg"
+    },
+    {
+        "id": 198,
+        "Label": "no",
+        "Logit": "yes",
+        "Q": "Are both the window and the train the same color?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/197_n525029.jpg"
+    },
+    {
+        "id": 199,
+        "Label": "no",
+        "Logit": "no",
+        "Q": "Are there toilets near the wall?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/198_n210269.jpg"
+    },
+    {
+        "id": 200,
+        "Label": "yes",
+        "Logit": "yes",
+        "Q": "Do you see fences in front of the bench that the man is sitting on?",
+        "img_name": "/root/projects/code_lihan/experiment_questions_data/test_400-600/199_n318684.jpg"
+    }
+]
