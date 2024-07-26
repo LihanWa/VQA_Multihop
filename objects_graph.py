@@ -365,7 +365,7 @@ def draw_number(centers,image_path, bbox, pred_phrases, number, output_path, qid
 # with open('MIC/objdict.pkl', 'rb') as fobj:
 #     objdict = pickle.load(fobj)
 
-# 只考虑两个物体可能重合的情况
+
 def get_area(xmin, ymin, xmax, ymax):
     return (xmax - xmin) * (ymax - ymin)
 def new_centers(boxes_filt_p):
@@ -489,7 +489,7 @@ class ObjModel:
             print("pred_phrase--",pred_phrases)
             to_be_deleted = set()
 
-            # 去除重复的大边框
+
             if(len(boxes_filt)==0):
                 print("Did not find: ",obj)
                 obj_not_found.append(obj)
@@ -497,7 +497,7 @@ class ObjModel:
                 for i in range(len(boxes_filt)):
                     for j in range(len(boxes_filt)):
                         if i != j and i not in to_be_deleted:
-                            # 检查 bbox[i] 是否包含 bbox[j]
+
                             
 
 
@@ -505,7 +505,7 @@ class ObjModel:
                                 boxes_filt[i, 2] >= boxes_filt[j, 2]-4 and boxes_filt[i, 3] >= boxes_filt[j, 3]-4):
                                 to_be_deleted.add(i)
 
-                # 使用集合操作避免重复并按索引删除
+
                 
                 boxes_filt = torch.stack([boxes_filt[i] for i in range(len(boxes_filt)) if i not in to_be_deleted])
                 pred_phrases = [pred_phrases[i] for i in range(len(pred_phrases)) if i not in to_be_deleted]
@@ -515,7 +515,7 @@ class ObjModel:
                 #     print((i[2]-i[0]),i[3]-i[1])
                 # print("pred_phrase--",pred_phrases)
 
-            #收集
+
             collect_boxes_filt.append(boxes_filt)
             collect_pred_phrases.append(pred_phrases)
 
@@ -525,7 +525,7 @@ class ObjModel:
                 ymax_numbers.append((int(filt[1]),int(filt[0]),len(ymax_numbers)))
         
         centers=new_centers(boxes_filt_p)
-        #更新边框上边来调整text mark位置
+
         if len(ymax_numbers)>1:
             adjusted_numbers = adjust_numbers(ymax_numbers)
             cnt=0
@@ -539,7 +539,7 @@ class ObjModel:
             print("Adjusted collect_boxes_filt",collect_boxes_filt)
             if cnt!=len(adjusted_numbers):
                 sys.exit("adjusted_numbers is not correct") 
-        #实验用的（生成紫色标记
+
         def annotate(image, boxes, scores, phrases):
             draw = ImageDraw.Draw(image)
             font = ImageFont.load_default()
@@ -564,7 +564,7 @@ class ObjModel:
             number, out_img,out_img_black, obj2num = draw_number(center_obj,full_image_path, boxes_filt, pred_phrases, number, output_path, 1, prev_img,prev_img_black)
             prev_img = out_img
             prev_img_black=out_img_black
-            #实验用的（生成紫色标记
+
             if need_obj_boxes:
                 if obj_i==0:
                     annotated_frame=annotate((image_pil),boxes_filt,torch.tensor([0]*len(pred_phrases)),pred_phrases)
@@ -573,7 +573,7 @@ class ObjModel:
                     # print("annotated_frame type",type(annotated_frame))
                 if obj_i==len(objlist)-1:
                     (annotated_frame).save(f'{out_origin}/{img_name_out}_obj_box.jpg')
-            #生成obj-dict,
+
             for idx, (bbox, phrase) in enumerate(zip(boxes_filt, pred_phrases)):
                 
                 temp_dict = dict()
@@ -623,7 +623,6 @@ class ObjModel:
 
 # model = ObjModel(grounded_checkpoint, config_file)
 
-# # 调用方法
 # objlist = ['bottle . cat . laptop']
 # img_name = 'computer_twoBottles.jpg'
 # testobj = model.find_obj(objlist, img_name)
