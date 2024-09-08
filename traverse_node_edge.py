@@ -5,9 +5,53 @@ import ast
 from tools import *
 
 # from dynamic_graph import 
-from gpt4_img import create_payload_final_ans,conclude_answer
+from gpt4_img_qwen import create_payload_final_ans,conclude_answer,create_payload_identity_tool
+# from gpt4_img import create_payload_final_ans,conclude_answer,create_payload_identity_tool
 os.environ["OPENAI_API_KEY"] = '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'
+os.environ["DASHSCOPE_API_KEY"]= 'sk-ac7aca0206ae4da9a517628e5fa2170f'
+
 # questions = ['What is color of the bottle to the left of the computer?']
+def modify_ans(question,final_ans,image_ori_dir):
+    logit=final_ans
+    pattern = r'\b(a|an|the|very)\b\s*'
+    logit=re.sub(pattern, '', logit, flags=re.IGNORECASE)
+    logit=logit.lower().replace('.','')
+    logit_words=logit.split(' ')
+    print('logit',logit)
+    if bool(re.search(r'\d', logit)):
+        print('***number exists in answer***')
+        print('image_ori_dir',image_ori_dir)
+        logit=answer_the_main_question(image_ori_dir,question,'','')
+        pattern = r'\b(a|an|the|very)\b\s*'
+        logit=re.sub(pattern, '', logit, flags=re.IGNORECASE)
+        logit=logit.lower().replace('.','')
+        logit_words=logit.split(' ')
+    if len(logit_words)>2 and (',' in logit or 'and' in logit):
+        # img=Image.open(image_ori_dir)
+        # img.show()
+        payload = conclude_answer(image_ori_dir, question,logit)
+        logit = payload.output.choices[0]['message'].content[0]['text']
+        if len(logit_words)>1:
+            logit=simplify_ans(question,logit)
+        return logit
+    elif len(logit_words)==2: 
+        if ' or ' in question and not ('left' in question or 'right' in question or 'Is there ' in question or 'Are there ' in question or 'Do you see' in question):
+            logit=choose_one(question,logit)
+        elif 'left' in logit_words:
+            logit='left'
+        elif 'right' in logit_words:
+            logit='right'
+        else:
+            logit=logit_words[1]
+    elif len(logit_words)>2 :
+        if ' or ' in question and not ('behind' in question or'left' in question or 'right' in question or 'Is there ' in question or 'Are there ' in question or 'Do you see' in question):
+            logit=choose_one(question,logit)
+        else:
+            logit=simplify_ans(question,logit)
+    if 'fat' in question: logit='fat'
+    print('modify ans',logit)
+
+    return logit
 def simplify_ans(question,answer):
     simplify_ans_prompt=ChatPromptTemplate.from_messages([
     ("system", '''You are a smart AI assistant simplifying the answer to one word based on the question and the answer. Next are a few examples for you.'''),
@@ -22,19 +66,50 @@ def simplify_ans(question,answer):
     ("human", '''The question: "{question}". The answer is "{answer}"'''),
     ])
     llm = ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0)#gpt-3.5-turbol
-    answer=(simplify_ans_prompt|llm|StrOutputParser()).invoke( {
+    logit=(simplify_ans_prompt|llm|StrOutputParser()).invoke( {
     "question": question,
     "answer":answer
     })
-    return answer
+    pattern = r'\b(a|an|the|very)\b\s*'
+    logit=re.sub(pattern, '', logit, flags=re.IGNORECASE)
+    logit=logit.lower().replace('.','')
+    return logit
+
+def choose_one(question,answer):
+    choose_one_prompt=ChatPromptTemplate.from_messages([
+    ("system", '''You are a smart AI assistant tasked with modifying the answer based on the question. If question want you to choose between two objects, if so you must choose one of them and the format should follow the words of the question. Next are a few examples for you.'''),
+    ("human", '''The question: "Is the man below the frame driving or sitting outside?". If the answer tends to choose "The man is sitting outside.", what words should you choose from the question?'''),
+    ("ai", '''sitting outside'''),
+    ("human", '''The question: "Does the shirt look short sleeved or long sleeved?". If the answer tends to choose "short sleeved", what words should you choose from the question?'''),
+    ("ai", '''short sleeved'''),
+    ("human", '''The question: "Which type of food is not cut, the carrots or the hot dogs?". If the answer tends to choose "the carrots", what words should you choose from the question?'''),
+    ("ai", '''carrots'''),
+    ("human", '''The question: "Does the cat look black and white or colorful?". If the answer tends to choose "The cat seems to be black and white", what words should you choose from the question?'''),
+    ("ai", '''black and white'''),
+    ("human", '''The question: "{question}". If the answer tends to choose "{answer}", what words should you choose from the question?'''),
+    ])
+    llm = ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0)#gpt-3.5-turbol
+    logit=(choose_one_prompt|llm|StrOutputParser()).invoke( {
+    "question": question,
+    "answer":answer
+    })
+    pattern = r'\b(a|an|the|very)\b\s*'
+    logit=re.sub(pattern, '', logit, flags=re.IGNORECASE)
+    logit=logit.lower().replace('.','')
+    return logit
 def answer_the_main_question(image_path,question,context,label_sentence):
     print("The question is :",question)
     print("\nThe context is: ",context)
-    payload = create_payload_final_ans(image_path, question,label_sentence,context)
+    question_words=question[:-1].split(" ")
+    if question_words[0]=='Who':
+        payload=create_payload_identity_tool(image_path, question,label_sentence)
+    else:
+        payload = create_payload_final_ans(image_path, question,label_sentence,context)
     # print("payload",payload)
-    response = query_openai(payload)
+    response = payload
     print(response)
-    answer=response['choices'][0]['message']['content']
+    # answer=response.output.choices[0]['message'].content[0]['text']
+    answer=response.output.choices[0]['message'].content[0]['text']
     return answer
 def find_lf_entities(question,entity_list):
     nodeQ_remove_template = ChatPromptTemplate.from_messages([
@@ -130,7 +205,7 @@ def dict_to_sentence(objects_dict):
             full_sentence = "In the image, there are " +  sentences[0] + '.'
         return full_sentence
 
-def main(questions,img_dirs,obj_dicts,axis_dicts,entity_lists,obj_not_founds,obj_filt_dicts):
+def main(questions,img_dirs,obj_dicts,axis_dicts,entity_lists,obj_not_founds,obj_filt_dicts,image_ori_path):
 
     ans_graph_entity={}
     
@@ -153,9 +228,15 @@ def main(questions,img_dirs,obj_dicts,axis_dicts,entity_lists,obj_not_founds,obj
         if graph=="No graph":
             print("No graph for this question")
             question=questions[i]
-
+            img_file=img_dir.split('/')[-1] #1_234.jpg
+            img_path=os.path.dirname(img_dir) #gqa
+            img_id=img_file.split('.')[0] #1_234
+            img_name=img_id.split('_')[1]#234
+            # img_name='COCO_train2014_000000000000'[:-len(img_name)]+img_name #okvqa
+            image_ori_dir=f'{image_ori_path}/{img_name}.jpg' 
             # final_ans=answer_the_main_question(img_dir,question,f"The object dictionary is {obj_dict}, the key is object and the value is labels, you can check with it.")
             final_ans=answer_the_main_question(img_dir,question,"","")
+            final_ans=modify_ans(questions[i],final_ans,image_ori_dir)
             return final_ans
         
         all_answers=[]
@@ -233,16 +314,17 @@ def main(questions,img_dirs,obj_dicts,axis_dicts,entity_lists,obj_not_founds,obj
                         print("obj_dict after update",obj_dict)
                         print("obj_filt_dict after update",obj_filt_dict)
                         img_file=img_dir.split('/')[-1] #1_234.jpg
-                        img_path=os.path.dirname(img_dir) #gqa
+                        img_path=os.path.dirname(img_dir) #test
                         img_id=img_file.split('.')[0] #1_234
                         img_name=img_id.split('_')[1]#234
-                        image_ori_dir=f'/root/projects/mmcot/gqa/images/{img_name}.jpg' #234.jpg
+                        # img_name='COCO_train2014_000000000000'[:-len(img_name)]+img_name #okvqa
+                        image_ori_dir=f'{image_ori_path}/{img_name}.jpg' 
                         input_path=image_ori_dir
                         output_path=f'{img_path}/{img_id}_new.jpg' #gqa/1_234_new.jpg
+                        print('image_ori_dir',image_ori_dir)
                         for ((kf,vf),(ko,vo)) in zip(obj_filt_dict.items(),obj_dict.items()):
                             if kf!= ko: sys.exit()
                             
-                            print('image_ori_dir',image_ori_dir)
                             new_draw_number_save(input_path, vf,vo, kf, output_path)
                             input_path=output_path
                         print(output_path)
@@ -303,7 +385,7 @@ def main(questions,img_dirs,obj_dicts,axis_dicts,entity_lists,obj_not_founds,obj
                             print(f"    Node Question at {target_node}: {subnode_question}\n")
                             ans_graph_entity[node]['edge'][edge_num][target_node]['node_question']=[]
 
-                            if subnode_question[:4]!="None" and target_node in obj_dict and len(obj_dict[target_node])==0:
+                            if subnode_question[:4]!="None" and target_node in obj_dict and len(obj_dict[target_node])!=0:
                                 print("obj_dict to update the question",obj_dict)
                                 subnode_question = replace_with_dict(subnode_question, obj_dict)
                                 print("updated_question ",subnode_question)
@@ -359,12 +441,13 @@ def main(questions,img_dirs,obj_dicts,axis_dicts,entity_lists,obj_not_founds,obj
                                     # print("obj_dict after update",obj_dict)
                                     # print("obj_filt_dict after update",obj_filt_dict)
                                     img_file=img_dir.split('/')[-1] #1_234_new.jpg
-                                    img_path=os.path.dirname(img_dir) #gqa
+                                    img_path=os.path.dirname(img_dir) #test
                                     img_id=img_file.split('.')[0] #1_234_new
                                     img_name=img_id.split('_')[1]#234
-                                    image_ori_dir=f'/root/projects/mmcot/gqa/images/{img_name}.jpg' #234.jpg
+                                    # img_name='COCO_train2014_000000000000'[:-len(img_name)]+img_name #okvqa
+                                    image_ori_dir=f'{image_ori_path}/{img_name}.jpg' 
                                     input_path=image_ori_dir
-                                    output_path=f'{img_path}/{img_id}_new.jpg' #gqa/1_234_new.jpg
+                                    output_path=f'{img_path}/{img_id}_new.jpg' #test/1_234_new.jpg
                                     for ((kf,vf),(ko,vo)) in zip(obj_filt_dict.items(),obj_dict.items()):
                                         if kf!= ko: sys.exit()
                                         # print( vf,vo, kf)
@@ -453,33 +536,16 @@ def main(questions,img_dirs,obj_dicts,axis_dicts,entity_lists,obj_not_founds,obj
         context=all_answers
         question=questions[i]
         # final_ans=answer_the_main_question(img_dir,question,context,label_sentence,axis_dict)
+
         final_ans=answer_the_main_question(img_dir,question,context,label_sentence)
         print("\nThe final answer is: ",final_ans)
-        def modify_ans(question,final_ans,image_ori_dir):
-            logit=final_ans
-            pattern = r'\b(a|an|the|very)\b\s*'
-            logit=re.sub(pattern, '', logit, flags=re.IGNORECASE)
-            logit=logit.lower().replace('.','')
-            logit_words=logit.split(' ')
-            if len(logit_words)>2 and (',' in logit or 'and' in logit):
-                img=Image.open(image_ori_dir)
-                img.show()
-                payload = conclude_answer(image_ori_dir, question,logit)
-                logit = query_openai(payload)['choices'][0]['message']['content']
-                if logit>1:
-                    logit=simplify_ans(question,logit)
-                return logit
-            elif len(logit_words)==2: 
-                logit=logit_words[1]
-            elif len(logit_words)>2:
-                logit=simplify_ans(question,logit)
 
-            return logit
         img_file=img_dir.split('/')[-1] #1_234_new.jpg
         img_path=os.path.dirname(img_dir) #gqa
         img_id=img_file.split('.')[0] #1_234_new
         img_name=img_id.split('_')[1]#234
-        image_ori_dir=f'/root/projects/mmcot/gqa/images/{img_name}.jpg' #234.jpg
+        # img_name='COCO_train2014_000000000000'[:-len(img_name)]+img_name #okvqa
+        image_ori_dir=f'{image_ori_path}/{img_name}.jpg' 
         final_ans=modify_ans(questions[i],final_ans,image_ori_dir)
     return final_ans
 if __name__=='__main__':

@@ -27,7 +27,9 @@ import sys
 import cv2
 import numpy as np
 import re
-from gpt4_img import create_payload_edge,judge_few_objs,query_openai,create_payload_node,create_payload_size_tool
+# from gpt4_img import create_payload_edge,judge_few_objs,query_openai,create_payload_node,create_payload_size_tool,create_payload_identity_tool
+from gpt4_img_qwen import create_payload_edge,judge_few_objs,query_openai,create_payload_node,create_payload_size_tool,create_payload_identity_tool
+os.environ["DASHSCOPE_API_KEY"]= 'sk-ac7aca0206ae4da9a517628e5fa2170f'
 
 #========== Functions for Gpt4 vqa tool=========
 
@@ -49,21 +51,45 @@ def VQA_tool(info:dict) -> str:
         payload = create_payload_node(image_path, info['subQ'],label_sentence)
     # print("payload",payload)
     # print("payloadpayload",payload)
-    response = query_openai(payload)
+    response =payload
     # print(response)
-    res=response['choices'][0]['message']['content']
+    res=response.output.choices[0]['message'].content[0]['text']
+    # res=response['choices'][0]['message']['content']
     print("Complete result from VQA tool: ",res)
     match = re.search(r"Answer:\s*(.*)", res)
 
-
+# 检查是否找到匹配项并提取
     if match:
         res = match.group(1)
     # res="The current object is "+obj+ ". I have already used tool 'VQA_tool' to process it."
     # print(" The result of VQA tool: ",res)
     print('---------------')
     return res
-# tools= [VQA_tool]
-# tool_executor = ToolExecutor(tools)
+
+@tool("identity_tool", return_direct=False)
+def identity_tool(info:dict) -> str:
+    # '''Wikipedia tool. This tool is used to provide background information from wikipedia (such as history, the job of a person, the habits of animals).'''
+    '''This tool is identity_tool, which is very powerful and useful. '''
+    image_path=info['img']
+    label_sentence=info['label_sentence']
+
+
+    payload = create_payload_identity_tool(image_path, info['subQ'],label_sentence)
+    response =payload
+    # print(response)
+    # res=response['choices'][0]['message']['content']
+    res=response.output.choices[0]['message'].content[0]['text']
+    print("Complete result from identity_tool: ",res)
+    match = re.search(r"Answer:\s*(.*)", res)
+
+# 检查是否找到匹配项并提取
+    if match:
+        res = match.group(1)
+    # res="The current object is "+obj+ ". I have already used tool 'VQA_tool' to process it."
+    # print(" The result of VQA tool: ",res)
+    print('---------------')
+    return res
+
 @tool("size_tool", return_direct=False)
 def size_tool(info:dict) -> str:
     # '''Wikipedia tool. This tool is used to provide background information from wikipedia (such as history, the job of a person, the habits of animals).'''
@@ -75,9 +101,10 @@ def size_tool(info:dict) -> str:
     print("info['subQ']",info['subQ'])
     question=info['subQ'][:-1]+f", compared with usual {info['obj']}?"
     payload = create_payload_size_tool(image_path, question,label_sentence)
-    response = query_openai(payload)
+    response =payload
     # print(response)
-    res=response['choices'][0]['message']['content']
+    # res=response['choices'][0]['message']['content']
+    res=response.output.choices[0]['message'].content[0]['text']
     print("Complete result from size tool: ",res)
     match = re.search(r"Answer:\s*(.*)", res)
 
@@ -313,16 +340,20 @@ def judge_obj_tool(info:dict) -> str:
     answer=''
     obj=info['obj']
     img_file=info['img'].split('/')[-1]#1_234.jpg
+    print(img_file)
     img_id=img_file.split('.')[0] #1_234
     img_name=img_id.split('_')[1]#234
-    image_dir=f'/root/projects/mmcot/gqa/images/{img_name}.jpg' #234.jpg
+    # image_dir=f'/root/projects/mmcot/gqa/images/{img_name}.jpg' #234.jpg
+    img_name='COCO_train2014_000000000000'[:-len(img_name)]+img_name #okvqa
+    image_dir=f'/root/projects/mmcot/OKVQA/train2014/{img_name}.jpg' 
+
     obj_dict=json.loads(info['obj_dict'])
     obj_filt_dict=json.loads(info['obj_filt_dict'])
     
     def extract_and_enhance(name,image_path, area, scale_factor,enlarge=True):
         new_size = (640, 427) 
         image = Image.open(image_path).convert("RGB")
-        image = image.resize(new_size, Image.ANTIALIAS)
+        image = image.resize(new_size, Image.Resampling.LANCZOS)
         wid=area[2]-area[0]
         hei=area[3]-area[1]
         ratio=0.2
@@ -342,17 +373,21 @@ def judge_obj_tool(info:dict) -> str:
         #                 [0, -1, 0]])
         # sharpened_img = cv2.filter2D(img_cv, -1, kernel)
         # enhanced_img = Image.fromarray(cv2.cvtColor(sharpened_img, cv2.COLOR_BGR2RGB))
-        dir=info['img'][:-4]
-        path=f'{dir}_{name}.jpg'
-        cropped_img.save(path)
-        return path
-    subimg_path=[]
+
+        # dir=info['img'][:-4]
+        # path=f'{dir}_{name}.jpg'
+        # cropped_img.save(path)
+        return cropped_img
+    # subimg_path=[]
+    subimg=[]
     # print('obj_filt_dict',obj_filt_dict)
     # print('obj_dict',obj_dict)
     for area,idx in zip(obj_filt_dict[obj],obj_dict[obj]):
-        subimg_path.append(extract_and_enhance(str(idx),image_dir,  area, 5,True))
-    def merge_images(image_paths, output_path, marks,direction='horizontal', spacing=0, bg_color=(255, 255, 255)):
-        images = [Image.open(image_path) for image_path in image_paths]
+        # subimg_path.append(extract_and_enhance(str(idx),image_dir,  area, 5,True))
+        subimg.append(extract_and_enhance(str(idx),image_dir,  area, 5,True))
+    # def merge_images(image_paths, output_path, marks,direction='horizontal', spacing=0, bg_color=(255, 255, 255)):
+    def merge_images(images, output_path, marks,direction='horizontal', spacing=0, bg_color=(255, 255, 255)):
+        # images = [Image.open(image_path) for image_path in image_paths]
         if direction == 'horizontal':
             x_offset = 5
             y_offset = 2
@@ -378,18 +413,33 @@ def judge_obj_tool(info:dict) -> str:
     dir=info['img'][:-4] 
     obj_str=obj.replace(" ",'')
     output_path = f'{dir}_{obj_str}_merged_image.jpg'
-    merge_images(subimg_path, output_path, marks,direction='horizontal', spacing=10)
+    # merge_images(subimg_path, output_path, marks,direction='horizontal', spacing=10)
+    merge_images(subimg, output_path, marks,direction='horizontal', spacing=10)
     marks=obj_dict[obj]
-    entities=[]
-    for k,v in obj_dict.items():
-        entities.append(k)
+    # entities=[]
+    # for k,v in obj_dict.items():
+    #     entities.append(k)
     # entity_str=(' or ').join(entities)
     question=f"Can you find {obj} in the sub-image marked by {marks}?"
     print( 'question',)
     print(f'{dir}_{obj_str}_merged_image.jpg')
     payload = judge_few_objs(f'{dir}_{obj_str}_merged_image.jpg', question,obj)
-    response = query_openai(payload)
-    ans_dict=json.loads(response['choices'][0]['message']['content'])
+
+    response =payload
+    if 'choices' in response.output:
+        # ans_dict=json.loads(response['choices'][0]['message']['content'])
+        ans_dict=json.loads(response.output.choices[0]['message'].content[0]['text'])
+    else:
+        print(response)
+        payload = judge_few_objs(f'{dir}_{obj_str}_merged_image.jpg', question,obj)
+        response =payload
+        if 'choices' in response.output:
+            # ans_dict=json.loads(response['choices'][0]['message']['content'])
+            ans_dict=json.loads(response.output.choices[0]['message'].content[0]['text'])
+        else:
+            ans_dict={}
+            for num in marks:
+                ans_dict[str(num)]='Not sure'
     judge_size_dict={}
     for axis,mark in zip(obj_filt_dict[obj],obj_dict[obj]):
         xmin, ymin, xmax, ymax=axis
@@ -427,8 +477,10 @@ def new_draw_number_save(image_path, bbox, obj_ids,obj, output_path):
         except IOError:
             text = ImageFont.load_default()
         #text area
-        text_width, text_height = draw.textsize(text, font=text_font)
-        mark_width, mark_height = draw.textsize(mark, font=mark_font)
+        text_bbox = draw.textbbox((0, 0), text, font=text_font)
+        mark_bbox = draw.textbbox((0, 0), mark, font=mark_font)
+        text_width, text_height = text_bbox[2] - text_bbox[0], text_bbox[3] - text_bbox[1]
+        mark_width, mark_height = mark_bbox[2] - mark_bbox[0], mark_bbox[3] - mark_bbox[1]
 
         text_x = area[0]+3
         mark_x = text_x+text_width+8
@@ -459,8 +511,11 @@ def new_draw_number_save(image_path, bbox, obj_ids,obj, output_path):
 
     
     image = Image.open(image_path)
+    image_mode = image.mode
+    if image_mode == 'L':
+        image = image.convert('RGB')
     new_size = (640, 427)  
-    image = image.resize(new_size, Image.ANTIALIAS)
+    image = image.resize(new_size, Image.Resampling.LANCZOS)
     count = 1
     # print('bbox, obj_ids',bbox, obj_ids)
     for idx, (bbox, obj_id) in enumerate(zip(bbox, obj_ids)):
@@ -509,6 +564,18 @@ def call_VQA_tool(state):
     info=form_info(state) 
     action = ToolInvocation(
         tool='VQA_tool',
+        tool_input={'info':info},
+    )
+    
+    response = tool_executor.invoke(action)#函数返回值
+    function_message = FunctionMessage(content=str(response), name=action.tool)
+    return { "Tool_return" : [function_message] }
+
+def call_identity_tool(state):
+    # print("call_VQA_tool")
+    info=form_info(state) 
+    action = ToolInvocation(
+        tool='identity_tool',
         tool_input={'info':info},
     )
     
@@ -602,12 +669,13 @@ def create_agents(state):
     if question_type=="edgeQ":
         if ('left' in question_words or 'right' in question_words) and (len(bracket_contents)>1):
             tool_selected="left_right_tool"
-        
+        elif question_words[0]=='Who':
+            tool_selected="identity_tool"
         else:
             tool_selected="VQA_tool"
     if question_type=="nodeQ":
 
-        if 'bottom' in question_words and 'top' in question_words:
+        if ('bottom' in question_words and 'top' in question_words) or 'bottom part' in question or 'top part' in question:
             tool_selected="bottom_top_tool"
         elif 'large' in question_words or 'small' in question_words or 'big' in question_words:
             
@@ -629,3 +697,26 @@ def create_agents(state):
     # print("tool_selected: ",tool_selected)
     return {"next":tool_selected}
 
+
+#     prompt = ChatPromptTemplate.from_messages([
+#         ("system", '''
+#     AI assistant should help select one correct tool to solve VQA question depending on the description of tools and the question. /
+# Tools Descriptions:
+#          "VQA-tool": "If there is no left or right in the 
+#          '''),
+#         ("human", '''The question is "{question}". The context is "{context}". What is the answer?'''),
+#     ])
+#     llm = ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0)#gpt-3.5-turbol
+#     ans=(prompt|llm|StrOutputParser()).invoke( {
+#             "question": question,
+#             "context": context,
+#         })
+
+
+    # new_state ['Context'].append(f"Context: {state['Context'][0].content}")
+    # new_state ['Subquestions'].append(f"Subquestions: {state['Subquestions'][0].content}")
+    # new_state ['Image'].append(f"Image: {state['Image'][0].content}")
+    # new_state ['Entity'].append(f"Entity: {state['Entity'][0].content}")
+    # new_state ['question_type'].append(f"question_type: {state['question_type'][0].content}")
+    # new_state ['obj_dict'].append(f"obj_dict: {state['obj_dict'][0].content}")
+    # new_state ['axis_dict'].append(f"axis_dict: {state['axis_dict'][0].content}")

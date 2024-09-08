@@ -30,7 +30,7 @@ def load_image(image_path):
     # load image
     image_pil = Image.open(image_path).convert("RGB")  # load image
     new_size = (640, 427) 
-    image_pil = image_pil.resize(new_size, Image.ANTIALIAS)
+    image_pil = image_pil.resize(new_size, Image.LANCZOS)
     transform = T.Compose(
         [
             # T.RandomResize([800], max_size=1333),
@@ -219,17 +219,7 @@ objname2id = defaultdict(dict)
 #   'woman' = [1,2,4]
 #}
 import re
-def draw_number(centers,image_path, bbox, pred_phrases, number, output_path, qid, prev_image=None,prev_image_black=None, topk=5):
-    # number is the tacker for how many objects we extracted so far
-    # Open the input image
-
-    def blackout_region(image_black, xmin, ymin, xmax, ymax):
-        image_black = image_black.convert("RGBA")
-        pixels = image_black.load()
-        for y in range(ymin, ymax):
-            for x in range(xmin, xmax):
-                pixels[x, y] = (0, 0, 0, 255)  # 设为黑色（0, 0, 0, 255）
-        return image_black
+def new_draw_number_save(image_path, bbox, obj_ids,obj, output_path):
     def draw_box(area,img):
         draw = ImageDraw.Draw(img)
         draw.rectangle(area, outline="yellow", width=(idx+2)%3+1) 
@@ -249,8 +239,7 @@ def draw_number(centers,image_path, bbox, pred_phrases, number, output_path, qid
         #text area
         text_width, text_height = draw.textsize(text, font=text_font)
         mark_width, mark_height = draw.textsize(mark, font=mark_font)
-        # print("text_width,text_height",(text_width,text_height))
-        # print("mark_width,mark_height",(mark_width,mark_height))
+
         text_x = area[0]+3
         mark_x = text_x+text_width+8
         if ((area[2]-area[0])<3*(text_width)) or ((area[3]-area[1])<3*mark_height):
@@ -279,14 +268,105 @@ def draw_number(centers,image_path, bbox, pred_phrases, number, output_path, qid
         return img
 
     
+    image = Image.open(image_path)
+    new_size = (640, 427)  
+    image = image.resize(new_size, Image.ANTIALIAS)
+
+    count = 1
+    for idx, (bbox, obj_id) in enumerate(zip(bbox, obj_ids)):
+
+
+
+        # new_phrase = obj.split('(')[0]
+        # pattern = r'[^a-zA-Z0-9\s-]'  # Matches any character that is not alphanumeric or whitespace
+        # new_phrase = re.sub(pattern, '', new_phrase)
+        bbox=[int(num) for num in bbox]
+        x_min, y_min, x_max, y_max = bbox
+        area=(x_min, y_min, x_max, y_max)
+        draw_text_mark(obj.lower(), str(obj_id),area,image)
+        draw_box(area,image)  
+    image.save(output_path)
+
+
+
+def draw_number(image_path, bbox, pred_phrases, obj,number, output_path, qid, prev_image=None,prev_image_black=None, topk=5):
+    # number is the tacker for how many objects we extracted so far
+    # Open the input image
+    
+
+    def blackout_region(image_black, xmin, ymin, xmax, ymax):
+        image_black = image_black.convert("RGBA")
+        pixels = image_black.load()
+        for y in range(ymin, ymax):
+            for x in range(xmin, xmax):
+                pixels[x, y] = (0, 0, 0, 255)  # 设为黑色（0, 0, 0, 255）
+        return image_black
+    def draw_box(area,img):
+        draw = ImageDraw.Draw(img)
+        draw.rectangle(area, outline="yellow", width=(idx+2)%3+1) 
+        return img
+    def draw_text_mark( text, mark,area,img):
+        #text font size
+        
+        draw = ImageDraw.Draw(img)
+        image_width, image_height = img.size
+        font_size_text = int(image_width * 3 / 100)
+        font_size_mark=font_size_text+5
+        # print(font_size_text)
+        try:
+            text_font = ImageFont.truetype("/root/projects/code_lihan/arial.ttf", font_size_text)  # 修改为实际可用的字体路径和大小
+            mark_font = ImageFont.truetype("/root/projects/code_lihan/arial.ttf", font_size_mark)  # 修改为实际可用的字体路径和大小
+        except IOError:
+            text = ImageFont.load_default()
+        #text area
+        text_bbox = draw.textbbox((0, 0), text, font=text_font)
+        mark_bbox = draw.textbbox((0, 0), mark, font=mark_font)
+        text_width, text_height = text_bbox[2] - text_bbox[0], text_bbox[3] - text_bbox[1]
+        mark_width, mark_height = mark_bbox[2] - mark_bbox[0], mark_bbox[3] - mark_bbox[1]
+
+        # print("text_width,text_height",(text_width,text_height))
+        # print("mark_width,mark_height",(mark_width,mark_height))
+        text_x = area[0]+3
+        mark_x = text_x+text_width+8
+        if ((area[2]-area[0])<3*(text_width)) or ((area[3]-area[1])<3*mark_height):
+            text_y = max(area[1] - mark_height,0)
+            mark_y=text_y
+        else:
+            text_y = area[1]
+            mark_y=text_y
+        text_area = (text_x, text_y, text_x + text_width, text_y + text_height)
+        mark_area = (mark_x, mark_y, mark_x + mark_width, mark_y + mark_height)
+        #text color
+        text_region = img.crop(text_area)
+        mark_region = img.crop(mark_area)
+        text_average_color = np.array(text_region).mean(axis=(0, 1))
+        mark_average_color = np.array(mark_region).mean(axis=(0, 1))
+        # print(text_average_color)
+        # print(mark_average_color)
+        red_color = np.array([255, 0, 0])
+        text_distance = np.linalg.norm(text_average_color - red_color)
+        mark_distance = np.linalg.norm(mark_average_color - red_color)
+        text_color = (255, 255, 255) if text_distance < 120 else (255, 0, 0)
+        mark_color = (255, 255, 255) if mark_distance < 120 else (255, 0, 0)
+        
+    
+
+        draw.text((text_x, text_y), text, font=text_font, fill=text_color)
+        draw.text((mark_x, mark_y), mark, font=mark_font, fill=mark_color)
+        return img
+
+    
     obj_dict = dict()
     if not prev_image:
         image = Image.open(image_path)
+        image_mode = image.mode
+        if image_mode == 'L':
+            image = image.convert('RGB')
     else:
         image = prev_image
     number = int(number)
     new_size = (640, 427)  
-    image = image.resize(new_size, Image.ANTIALIAS)
+    image = image.resize(new_size, Image.Resampling.LANCZOS)
     #open another one for black
     if not prev_image_black:
         image_black = Image.open(image_path)
@@ -294,7 +374,7 @@ def draw_number(centers,image_path, bbox, pred_phrases, number, output_path, qid
         image_black = prev_image_black
     number = int(number)
     new_size = (640, 427)  
-    image_black = image_black.resize(new_size, Image.ANTIALIAS)
+    image_black = image_black.resize(new_size, Image.Resampling.LANCZOS)
     # Initialize drawing context
     # draw = ImageDraw.Draw(image)
     
@@ -305,9 +385,10 @@ def draw_number(centers,image_path, bbox, pred_phrases, number, output_path, qid
             break
 
 
-        new_phrase = phrase.split('(')[0]
-        pattern = r'[^a-zA-Z0-9\s]'  # Matches any character that is not alphanumeric or whitespace
-        new_phrase = re.sub(pattern, '', new_phrase)
+        # new_phrase = phrase.split('(')[0]
+        # pattern = r'[^a-zA-Z0-9\s-]'  # Matches any character that is not alphanumeric or whitespace
+        # new_phrase = re.sub(pattern, '', new_phrase)
+        new_phrase=obj
         bbox=[int(num) for num in bbox]
         x_min, y_min, x_max, y_max = bbox
         new_phrase1 = f'{new_phrase}_{x_min}_{y_min}_{x_max}_{y_max}'
@@ -365,7 +446,7 @@ def draw_number(centers,image_path, bbox, pred_phrases, number, output_path, qid
 # with open('MIC/objdict.pkl', 'rb') as fobj:
 #     objdict = pickle.load(fobj)
 
-
+# 只考虑两个物体可能重合的情况
 def get_area(xmin, ymin, xmax, ymax):
     return (xmax - xmin) * (ymax - ymin)
 def new_centers(boxes_filt_p):
@@ -428,25 +509,41 @@ def new_centers(boxes_filt_p):
 
 counter2 = 0
 # topk=5
+def adjust_indexed_arr(indexed_arr, i, temp=1):
+    if i < 1 or i - temp < 0:  # 终止条件
+        return indexed_arr
+    
+    if indexed_arr[i][0] - indexed_arr[i-1][0] < 24:
+        if abs(indexed_arr[i][1] - indexed_arr[i-temp][1]) < 65:
+            indexed_arr[i-1] = (max(0, indexed_arr[i][0] - 24), indexed_arr[i-1][1], indexed_arr[i-1][2])
+        else:
+            return adjust_indexed_arr(indexed_arr, i, temp + 1)  # 递归调用
+    return indexed_arr
 def adjust_numbers(arr):
     indexed_arr=arr
     n = len(indexed_arr)
-    indexed_arr.sort(key=lambda x: x[0])
-    # print("before sort",indexed_arr)
     for j in range(3):
+        indexed_arr.sort(key=lambda x: x[0])
+        # print("before sort",indexed_arr)
         for i in range(1, n):
-            if (indexed_arr[i][0] - indexed_arr[i-1][0] < 24) and (abs(indexed_arr[i][1] - indexed_arr[i-1][1]) < 65):
-                indexed_arr[i-1] = (max(0, indexed_arr[i][0] - 24),indexed_arr[i-1][1],indexed_arr[i-1][2])
+            for tmp in range(1,i+1):
+                if indexed_arr[i][0] - indexed_arr[i-tmp][0] < 48:
+                    if abs(indexed_arr[i][1] - indexed_arr[i-tmp][1]) < 75:
+                        indexed_arr[i-tmp] = (max(0, indexed_arr[i][0] - 48), indexed_arr[i-tmp][1], indexed_arr[i-tmp][2])
+                        break
+                else: 
+                    break
     # print("mid sort",indexed_arr)
     if indexed_arr[0][0] < 0:
         indexed_arr[0] = [0,indexed_arr[0][1],indexed_arr[0][2]]
     indexed_arr.sort(key=lambda x: x[2])
-    # print("after sort",indexed_arr)
+    print("after sort",indexed_arr)
     adjusted_arr = [item[0] for item in indexed_arr]
     return adjusted_arr
 class ObjModel:
     def __init__(self, grounded_checkpoint=grounded_checkpoint, config_file=config_file, device='cuda'):
         self.model = load_model(config_file, grounded_checkpoint, device=device)
+        self.model = self.model.to('cuda:0')
         print('==========loading model successfully=============')
 
     def find_obj(self, objlist, img_name,img_name_out,img_ori='/root/projects/mmcot/gqa/images',out_origin= './test_morethan2',need_obj_boxes=False):
@@ -477,7 +574,7 @@ class ObjModel:
         obj_not_found=[]
         
         for obj in objlist:
-
+            obj=obj.lower()
             boxes_filt, pred_phrases, image_pil, image = cropping(self.model,full_image_path, obj) # xiugai self.model
             #make the filt a bit larger
             for i in range(len(boxes_filt)):
@@ -489,7 +586,7 @@ class ObjModel:
             print("pred_phrase--",pred_phrases)
             to_be_deleted = set()
 
-
+            # 去除重复的大边框
             if(len(boxes_filt)==0):
                 print("Did not find: ",obj)
                 obj_not_found.append(obj)
@@ -497,14 +594,13 @@ class ObjModel:
                 for i in range(len(boxes_filt)):
                     for j in range(len(boxes_filt)):
                         if i != j and i not in to_be_deleted:
-
+                            # 检查 bbox[i] 是否包含 bbox[j]
                             
 
 
                             if get_area(boxes_filt[i, 0],boxes_filt[i, 1],boxes_filt[i, 2],boxes_filt[i, 3])>get_area(boxes_filt[j, 0],boxes_filt[j, 1],boxes_filt[j, 2],boxes_filt[j, 3])and(boxes_filt[i, 0] <= boxes_filt[j, 0]+4 and boxes_filt[i, 1] <= boxes_filt[j, 1]+4 and
                                 boxes_filt[i, 2] >= boxes_filt[j, 2]-4 and boxes_filt[i, 3] >= boxes_filt[j, 3]-4):
                                 to_be_deleted.add(i)
-
 
                 
                 boxes_filt = torch.stack([boxes_filt[i] for i in range(len(boxes_filt)) if i not in to_be_deleted])
@@ -515,7 +611,7 @@ class ObjModel:
                 #     print((i[2]-i[0]),i[3]-i[1])
                 # print("pred_phrase--",pred_phrases)
 
-
+            #收集
             collect_boxes_filt.append(boxes_filt)
             collect_pred_phrases.append(pred_phrases)
 
@@ -525,7 +621,7 @@ class ObjModel:
                 ymax_numbers.append((int(filt[1]),int(filt[0]),len(ymax_numbers)))
         
         centers=new_centers(boxes_filt_p)
-
+        #更新边框上边来调整text mark位置
         if len(ymax_numbers)>1:
             adjusted_numbers = adjust_numbers(ymax_numbers)
             cnt=0
@@ -539,7 +635,7 @@ class ObjModel:
             print("Adjusted collect_boxes_filt",collect_boxes_filt)
             if cnt!=len(adjusted_numbers):
                 sys.exit("adjusted_numbers is not correct") 
-
+        #实验用的（生成紫色标记
         def annotate(image, boxes, scores, phrases):
             draw = ImageDraw.Draw(image)
             font = ImageFont.load_default()
@@ -559,12 +655,12 @@ class ObjModel:
             topk=5
             pred_phrases=collect_pred_phrases[obj_i]
             boxes_filt=collect_boxes_filt[obj_i]
-            obj_filt_dict[objlist[obj_i]]=boxes_filt.tolist()
+            obj_filt_dict[objlist[obj_i].lower()]=boxes_filt.tolist()
             center_obj=centers[number:number+len(boxes_filt)]
-            number, out_img,out_img_black, obj2num = draw_number(center_obj,full_image_path, boxes_filt, pred_phrases, number, output_path, 1, prev_img,prev_img_black)
+            number, out_img,out_img_black, obj2num = draw_number(full_image_path, boxes_filt, pred_phrases, objlist[obj_i].lower(),number, output_path, 1, prev_img,prev_img_black)
             prev_img = out_img
             prev_img_black=out_img_black
-
+            #实验用的（生成紫色标记
             if need_obj_boxes:
                 if obj_i==0:
                     annotated_frame=annotate((image_pil),boxes_filt,torch.tensor([0]*len(pred_phrases)),pred_phrases)
@@ -573,19 +669,20 @@ class ObjModel:
                     # print("annotated_frame type",type(annotated_frame))
                 if obj_i==len(objlist)-1:
                     (annotated_frame).save(f'{out_origin}/{img_name_out}_obj_box.jpg')
-
+            #生成obj-dict,
             for idx, (bbox, phrase) in enumerate(zip(boxes_filt, pred_phrases)):
                 
                 temp_dict = dict()
                 if idx >= topk:
                     break
-                new_phrase = phrase.split('(')[0]
+                # new_phrase = phrase.split('(')[0]
                 #TODO get accurate score
                 score = phrase.split('(')[1]
-                new_phrase.replace('SEP', '')
+                # new_phrase.replace('SEP', '')
                 score = float(score.replace(')', ''))
-                pattern = r'[^a-zA-Z0-9\s]'  # Matches any character that is not alphanumeric or whitespace
-                new_phrase = re.sub(pattern, '', new_phrase)
+                # pattern = r'[^a-zA-Z0-9\s-]'  # Matches any character that is not alphanumeric or whitespace
+                # new_phrase = re.sub(pattern, '', new_phrase)
+                new_phrase=objlist[obj_i].lower()
                 #e.g. "apple"
                 instance_dict[new_phrase] += 1
                 instance_name = f'{new_phrase}_{instance_dict[new_phrase]}'
@@ -611,11 +708,11 @@ class ObjModel:
             
             os.makedirs(os.path.dirname(output_path), exist_ok=True)
             out_img.save(output_path)
-        if out_img_black: # save generated images
-            # import pdb; pdb.set_trace()
-            out_img_black = out_img_black.convert('RGB')
-            os.makedirs(os.path.dirname(output_path_black), exist_ok=True)
-            out_img_black.save(output_path_black)
+        # if out_img_black: # save generated images
+        #     # import pdb; pdb.set_trace()
+        #     out_img_black = out_img_black.convert('RGB')
+            # os.makedirs(os.path.dirname(output_path_black), exist_ok=True)
+            # out_img_black.save(output_path_black)
             # img=Image.open(output_path)
             # img.show()
         return obj_dict,obj_not_found,obj_filt_dict
@@ -623,6 +720,7 @@ class ObjModel:
 
 # model = ObjModel(grounded_checkpoint, config_file)
 
+# # 调用方法
 # objlist = ['bottle . cat . laptop']
 # img_name = 'computer_twoBottles.jpg'
 # testobj = model.find_obj(objlist, img_name)

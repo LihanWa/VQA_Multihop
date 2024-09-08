@@ -36,11 +36,23 @@ from typing import TypedDict, Annotated, Sequence
 from langchain.tools.render import format_tool_to_openai_function
 import json
 from langchain_community.tools.tavily_search import TavilySearchResults
+from langchain_community.llms import Tongyi
+
 import os
 os.environ["OPENAI_API_KEY"] = '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'
+os.environ["DASHSCOPE_API_KEY"]= 'sk-ac7aca0206ae4da9a517628e5fa2170f'
 
 def entity_generation(questions):
     print("========== Entity and Question ===========")
+    #初步筛选可以用来detect的object
+    # prompt=ChatPromptTemplate.from_messages([
+    #     SystemMessage(content='''You are a smart AI assistant for selecting entity in the VQA question for object detection.
+
+    #     The question is as follows:'''),
+    #     # MessagesPlaceholder(variable_name="context"),
+    #     MessagesPlaceholder(variable_name="question"),
+    #      "Just show me entities you chose in the format of ['a','b'] or just empty []"
+    # ])
     entity_generation_prompt = ChatPromptTemplate.from_messages([
     ("system", '''You are a smart AI assistant for selecting entities worthy of object detection from a VQA question. Format the output in [], such as ['a','b']. Next are a few examples for you. '''),
     ("human", '''The VQA question: "Does the man sitting in the group of people look tired?". What are the entities worthy of object detection?'''),
@@ -53,12 +65,20 @@ def entity_generation(questions):
     ])
     all_entities_question=[]
     nodes=[]
-    llm = ChatOpenAI(model_name="gpt-4-turbo", temperature=0)#gpt-3.5-turbol
+    # llm = ChatOpenAI(model_name="gpt-4o-2024-05-13", temperature=0)#gpt-3.5-turbol
+    llm=Tongyi(model_name="qwen-max",temperature=0)
     def gene_entity_list(question):
         entities=(entity_generation_prompt|llm|StrOutputParser()).invoke( {
         "question": question
         })
-        entity_list=eval(entities)
+        # print(question)
+        # print(entities)
+        try:
+            entity_list=eval(entities)
+        except:
+        # if not isinstance(entity_list, list):
+            return []
+
         # print(type(entity_list))
         # print((entity_list[0]))
         pattern = r'\b(photo|image|photograph|picture)s?\b'
@@ -68,12 +88,14 @@ def entity_generation(questions):
         del_words=['place','who','Who']
         for del_word in del_words:
             if del_word in entity_list:
-                entity_list.remove(del_words)
+                entity_list.remove(del_word)
         return entity_list
     for i in range(len(questions)):
         # llm = ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0)#gpt-3.5-turbol
         question=questions[i]
+        # print(question)
         entity_list=gene_entity_list(question)
+        # print(entity_list)
         if len(entity_list)==0:
             pattern = r'\b(photo|image|photograph|picture)s?\b'
             question=re.sub(pattern, '', question, flags=re.IGNORECASE)
@@ -92,28 +114,38 @@ def relationship_dict_generation(entity_lists,questions):
     print("========== Dict Generation ===========")
     print(questions)
 
-
+    #dictionary
     relationship_tuples_generation = ChatPromptTemplate.from_messages([
     ("system", '''You are a smart AI assistant and you should help me figure out the relationship tuples based on a VQA question. /
-    You will be given a list of entities, and you should analyze these entities with the VQA question. Relationship includes but not limited to: 1. spatial relationship 2. affiliation However, you should not include tuples with parallel relationship. It is allowed to find out there is no relationship tuples. Next are a few examples for you.'''),
+    You will be given a list of entities, and you should analyze these entities with the VQA question, and entities in relationship tuples result should comes from this list. Relationship includes but not limited to: 1. spatial relationship 2. affiliation. It is allowed to find out there is no relationship tuples. Next are a few examples for you.'''),
     ("human", '''The list of entities is: ['woman','sweater','man','door']. The question is: "Is the man who is to the right of the woman in red sweater to the left or to the right of the door?". What are the relationship tuples?'''),
+    # ("ai", '''Thought: since the 'woman' is talking with the 'man', and both the 'woman' and the 'man' are in the given list E, the relationship tuple should be: ('woman','man'). Since the 'woman' is in the 'sweater', and both the 'woman' and 'sweater' are in the list E, the : ('woman','sweater'). Since it is asking if the man is next to the door: ('man','door'). Answer: [('woman','man'),('woman','sweater'),('man','door')]'''),
     ("ai", '''Thought: Since it says the 'man' is to the right of 'woman': ('man','woman'). Since it says the 'woman' is in the 'sweater': ('woman','sweater'). Since it says if the 'man' is to the left or to the right of the 'door': ('man','door'). Answer: [('man','woman'),('woman','sweater'),('man','door')]'''),
     ("human", '''The list of entities is: ['man','vehicle','chair']. The question is: "What type of vehicle is to the right of the man sitting on the chair?". What are the relationship tuples?'''),
     ("ai", '''Thought: Since it says if the 'vehicle' is to the right of the 'man': ('vehicle','man'). Since it says the 'man' is sitting on the 'chair': ('man','chair'). Answer: [('vehicle','man'),('man','chair')]'''),
     ("human", '''The list of entities is: ['apple','window']. The question is: "Do you see either any apple in the window?" What are the relationship tuples?'''),
-    ("ai", '''Thought: Since it says if the 'apple' is in the 'window':('apple','window'). Answer: [('apple','window')'''),
+    ("ai", '''Thought: Since it says if the 'apple' is in the 'window':('apple','window'). Answer: [('apple','window')]'''),
     ("human", '''The list of entities is: ['apple','banana']. The question is: "Do you see either any apple or banana?" What are the relationship tuples?'''),
     ("ai", '''Thought: There is 'or' between 'apple' and 'banana', so the question can be divided to "Do you see any apple?" and "Do you see any banana?". 'apple' and 'banana' are seperated: No tuple. Answer: []'''),
+    # ("human", '''The list of entities is: ['apple','banana']. The question is: "Does the man like the dog lying on the ground?". What are the relationship tuples?'''),
     ("system",'''Notice there are some special cases if two entities are connected by 'and' or 'or', an example is as follows:'''),
+    # ("ai", '''Thought: Since it is asking if the man like the dog, and after checking both 'man' and 'dog' are in the list E: ('man','dog'). Since the dog is lying on the ground, and after checking both 'dog' and 'ground' are in the list E: ('dog','ground'). Answer: [('man','dog'),('dog','ground')]'''),
+
+    # ("human", '''The original dictionary is {{'person':[1,2],'shirt':[4,6]}}. The question is "Is the person [1,2] wearing a shirt [4,6]?" The answer is "Person [1] is wearing shirt [4]. Person [2] is not wearing shirt [6]." What is the update dictionary?'''),
+    # ("ai", "Thought: Since the woman is talking with the man: ('woman','man'). Since the woman is in the sweater: ('woman','sweater'). Since it is asking if the man is next to the door: ('man','door'). Answer: [('woman','man'),('woman','sweater'),('man',door)]""),
     ("human", '''The list of entities is: {entity_list}. The question is "{question}". What are the relationship tuples??'''),
     ])
 
-    llm = ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0)#gpt-3.5-turbol
+    llm=Tongyi(model_name="qwen-max",temperature=0)
+    # llm = ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0)#gpt-3.5-turbol
+    # ans=(prompt|llm).invoke({"input":[entities_Qs[0]]})
+    # print(ans)
     all_relationship_dict=[]
     extracted_lists=[]
-    def gene_resd_tup(entity_list,question):
+    def gene_resd_tup(entity_list,question,cnt):
+        if cnt==1: print('empty, try again.')
         if len(entity_list)<2:
-            return defaultdict(list),[]
+            return []
         new_obj_dict=(relationship_tuples_generation|llm|StrOutputParser()).invoke( {
         "entity_list": entity_list,
         "question": question
@@ -128,15 +160,28 @@ def relationship_dict_generation(entity_lists,questions):
         # pairs = extracted_tuples
         # result_dict = defaultdict(list)
         for key, value in extracted_tuples:
+
             if key not in entity_list or value not in entity_list:
                 extracted_tuples.remove((key,value))
+        id_to_remove=[]
+        for i,(key, value) in enumerate(extracted_tuples):
+            if key not in entity_list or value not in entity_list:
+                id_to_remove.append(i)
+        if len(id_to_remove)>0:
+            for index in sorted(id_to_remove, reverse=True):
+                del extracted_tuples[index]
+            
+            if len(extracted_tuples)==0 and cnt==0:
+                cnt=1
+                gene_resd_tup(entity_list,question,cnt) 
+        cnt=0
                 # continue
         #     result_dict[key].append(value)
         print('extracted_tuples',extracted_tuples)
         return extracted_tuples
     for entity_list,question in zip(entity_lists,questions):
         if isinstance(question, str):
-            extracted_tuples=gene_resd_tup(entity_list,question)
+            extracted_tuples=gene_resd_tup(entity_list,question,0)
         else:
             sub_qs=(question[0],question[1])
             sub_lists=(entity_list[0],entity_list[1])
@@ -146,15 +191,91 @@ def relationship_dict_generation(entity_lists,questions):
                 if len(sub_list)<2: extracted_tuples.append([])
                 elif len(sub_list)==2: extracted_tuples.append([(sub_list[0],sub_list[1])])
                 else:
-                    extracted_tuples.append(gene_resd_tup(sub_list,sub_q))
+                    extracted_tuples.append(gene_resd_tup(sub_list,sub_q,0))
             extracted_tuples=(extracted_tuples[0],extracted_tuples[1])
             # all_relationship_dict.append(result_dict)
         extracted_lists.append(extracted_tuples)
             # print('all_relationship_dict',all_relationship_dict)
-        # print('extracted_lists',extracted_lists)
+        print('extracted_lists',extracted_lists)
     return extracted_lists
+# def relationship_dict_generation(all_entities_question):
+#     print("========== Dict Generation ===========")
+#     #dictionary
+#     prompt=ChatPromptTemplate.from_messages([
+#             SystemMessage(content='''You are a clever AI assistant and you should help me analyze a VQA problem by figuring out the relationship between the entities and organize the relationship by a dictionary. I have a list of entities and an attached VQA question, and the entities are extracted from the question. 
+#             Here I mainly consider two types of relationship among entities according to the question. The first one is affiliation, and the second one is parallel.
+#             I will use a dictionary to represent the two types of relationship.
+
+#             1-For the affiliation relationship: One entity is a part of the other one, or one entity belongs to the the other one.
+#             For instance, all things on a human body belongs to this person.
+#             2-For the parallel relationship: One entity does not belong to the other one, but there are some close relationship between the entities according to the question.
+#             For instance, two entities are connect by words such as "and"
+#             (Notice that the relationship between two entities cannot be both of them at the same time. It means if a pair of entities exists in "Parent_children", it cannot be in "parallel"; vice versa.
+                        
+#             Here are two examples:
+                        
+#             The list of entities and the VQA question is: list: ['woman','sweater','man','door'] Question: Is the man who is talking with the woman in red sweater next to the door?
+#             The output should be like:
+#             {"Parent_children":[{"woman":["sweater"]}],"Parallel":[{"woman":"man"},{"man":"door"}]}     
+
+#             The list of entities and the VQA question is: list: ['man','dog','ground'] Question: Does the man like the dog lying on the ground?
+#             The output should be like:
+#             {"Parent_children":[]}],"Parallel":[{"man":"dog"},{"dog":"ground"}]]}  
+
+#             Now, help me with the following list of entities and the VQA question:      '''),
+#             # MessagesPlaceholder(variable_name="context"),
+#             MessagesPlaceholder(variable_name="input"),
+            
+#     ])
+#     entities_Qs=all_entities_question# llm = ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0)#gpt-3.5-turbol
+#     # ans=(prompt|llm).invoke({"input":[entities_Qs[0]]})
+#     # print(ans)
+#     all_relationship_dict_=[]
+#     for i in range(len(entities_Qs)):
+#         entities_Q=entities_Qs[i]
+#         llm = ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0)#gpt-3.5-turbol
+#         # print(entities_Q)
+
+#         ans=(prompt|llm).invoke({"input":[entities_Q]})
+#         # ans=json.load(ans.content)
+#         res=ans.content
+#         # print(ans)
+#         # print(res)
+#         all_relationship_dict_.append(res)
+#     all_relationship_dict=[None]*len(all_relationship_dict_)
+#     for i in range(len(all_relationship_dict_)):
+#         all_relationship_dict[i]=remove_redundant_relationships(all_relationship_dict_[i])
+#     # for relationship_dict in all_relationship_dict:
+#     #     print(relationship_dict)
+#     return all_relationship_dict
 
 
+# def remove_redundant_relationships(content):
+
+#     data_dict = json.loads(content)
+#     # 获取Parent_children和Parallel列表
+#     parent_children = data_dict.get('Parent_children')
+#     # print(parent_children)
+#     parallel = data_dict.get('Parallel')
+
+#     # 创建一个集合来存储Parent_children中的所有关系
+#     parent_children_relations = set()
+#     for relation in parent_children:
+#         for parent, children in relation.items():
+#             for child in children:
+#                 parent_children_relations.add((parent, child))
+#     # 过滤掉Parallel中与Parent_children重复的条目
+#     new_parallel = [] 
+#     for relation in parallel:
+#         for parent, child in relation.items():
+#             if (parent, child) not in parent_children_relations:
+#                 new_parallel.append({parent: child})
+#     # 更新原始字典中的Parallel列表
+#     data_dict['Parallel'] = new_parallel
+#     # 将更新后的字典转换回JSON字符串
+#     return data_dict
+            # Besides the direct and clear characteristic of an entity, you should also consider one special type of subquestion: "Where is ...?". This "Where is ...?" type of question should only be asked when the question contains preposition of location, such as "left, right, front, back, up, down, next, besides, on" and so on. 
+            # For example, for "A on B", both "Where is A?" and "Where is B?" are needed.
 def nodequestion_generation(all_nodes,questions,obj_dicts):
     #归纳关系
     print("========== Node question Generation ===========")
@@ -168,8 +289,8 @@ def nodequestion_generation(all_nodes,questions,obj_dicts):
     ("ai", '''Thought: Since in the VQA question, 'under' connects only one entity 'sign', 'under' can be in the characteristics question. Answer: {{"sign":["What is under the sign?"]}}'''),
     ("human", '''The list of entities is: ['building']. The VQA question is "Which side of the photo is the tall building on?". What are the position adverb question for each entity in the list?'''),
     ("ai", '''Thought: Since in the VQA question, it is asking the position of the building on the image, include it in the question. Answer: {{"building":["On which side of the image is the tall building?"]}}'''),
-    ("human", '''The list of entities is: ['building']. The VQA question is "Is the cat on the right side or on the left?". What are the position adverb question for each entity in the list?'''),
-    ("ai", '''Thought: Since in the VQA question, it is asking the position of the cat on the image, include it in the question. Answer: {{"building":["On which side of the image is the cat?"]}}'''),
+    ("human", '''The list of entities is: ['cat']. The VQA question is "Is the cat on the right side or on the left?". What are the position adverb question for each entity in the list?'''),
+    ("ai", '''Thought: Since in the VQA question, it is asking the position of the cat on the image, include it in the question. Answer: {{"cat":["On which side of the image is the cat?"]}}'''),
     ("human", '''The list of entities is: {entity_list}. The VQA question is "{question}". What are the position adverb question for each entity in the list?'''),
     ])
     posi_qs=[]
@@ -178,53 +299,60 @@ def nodequestion_generation(all_nodes,questions,obj_dicts):
         if_there='there' in question_words or 'Do you see' in question
         if_bottom='bottom' in question_words and 'top' in question_words
         answer_dict={}
-        
-        if if_there or if_bottom:
-            if if_there:
-                for node in all_node:
-                    answer_dict[node]=[f'Is {node} in the image?']
-            if if_bottom:
-                for node in all_node:
-                    if node in answer_dict:
-                        answer_dict[node].append(f'Is {node} in the bottom part or top part of the image?')
-                    else:
-                        answer_dict[node]=[f'Is {node} in the bottom part or top part of the image?']
+        print(if_bottom)
+        # if if_there or if_bottom:
+        #     if if_there:
+        #         for node in all_node:
+        #             answer_dict[node]=[f'Is {node} in the image?']
+        #     if if_bottom:
+        #         for node in all_node:
+        #             if node in answer_dict:
+        #                 answer_dict[node].append(f'Is {node} in the bottom part or top part of the image?')
+        #             else:
+        #                 answer_dict[node]=[f'Is {node} in the bottom part or top part of the image?']
+        # else:
+        if copy:
+            answer_dict={all_node[0]:[question]}
         else:
-            if copy:
-                answer_dict={all_node[0]:[question]}
+
+            # llm = ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0)#gpt-3.5-turbol
+            llm=Tongyi(model_name="qwen-max",temperature=0)
+            posi=(nodequestion_generation_prompt|llm|StrOutputParser()).invoke( {
+                "entity_list":all_node ,
+                "question": question,
+                })
+            pattern = r"Answer:\s*(\{.*\})"
+            match = re.search(pattern, posi)
+            if match:
+                json_str = match.group(1)
+                # print('json_str',json_str)
+                # print(question)
+                answer_dict = json.loads(json_str)
             else:
-    
-                llm = ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0)#gpt-3.5-turbol
-                posi=(nodequestion_generation_prompt|llm|StrOutputParser()).invoke( {
-                    "entity_list":all_node ,
-                    "question": question,
-                    })
-                pattern = r"Answer:\s*(\{.*\})"
-                match = re.search(pattern, posi)
-                if match:
-                    json_str = match.group(1)
-                    answer_dict = json.loads(json_str)
-                else:
-                    answer_dict={}
-                    for node in all_node:
-                        answer_dict[node]=[]
-        if not if_there:
-            for node in all_node:
-                if len(obj_dict[node])<3:
-                    if node in answer_dict:
-                        answer_dict[node][:0]=[f'Is {node} in the image?']
-                    else:
-                        answer_dict[node]=[f'Is {node} in the image?']
+                answer_dict={}
+                for node in all_node:
+                    answer_dict[node]=[]
+        # if not if_there:
+        #     for node in all_node:
+        #         if len(obj_dict[node])<3:
+        #             if node in answer_dict:
+        #                 answer_dict[node][:0]=[f'Is {node} in the image?']
+        #             else:
+        #                 answer_dict[node]=[f'Is {node} in the image?']
         return answer_dict
     for all_node,question,obj_dict in zip(all_nodes,questions,obj_dicts):
         # print(all_node,question)
         if isinstance(question, str):
             posi_q_dict=gene_posi_q(all_node,question,obj_dict,False)
+            nodes=all_node
         elif isinstance(question, tuple):
             sub_q1=question[0]
             sub_q2=question[1]
             sub_node1=all_node[0]
             sub_node2=all_node[1]
+            nodes=sub_node1
+            nodes.extend(sub_node2)
+            print(nodes)
             if len(sub_node1)==1:
                 sub_posi_q_dict1=gene_posi_q(sub_node1,sub_q1,obj_dict,True)
             else:
@@ -243,6 +371,11 @@ def nodequestion_generation(all_nodes,questions,obj_dicts):
             posi_q_dict=sub_posi_q_dict1
         else: 
             sys.exit()
+        del_ele=[]
+        for k in posi_q_dict:
+            if not k in nodes: 
+                del_ele.append(k)
+        for k in del_ele: del posi_q_dict[k]
         posi_qs.append(posi_q_dict)
         #  In each subquestion, it should not contain other entities.
 
@@ -268,26 +401,35 @@ def nodequestion_generation(all_nodes,questions,obj_dicts):
         For example, for "A on B", both "Where is A?" and "Where is B?" are needed. /
         2- "What type is ...?" This question should be asked only when the VQA question is asking the type of an entity, especially when the entity is a general category, such as vegetable and vehicle. It may ask like "What is ...", "What type is...", "What kind of ..." and "Which type is ...". '''),
     ("human", '''The list of entities is: ['woman','sweater','man','door'] The VQA question is "Is the old man who is talking with the woman in long sweater next to the door?".'''),
+    # ("ai", '''Thought: In the list ['woman','cat','box']. For 'woman' , it says the 'woman' is old, so the subquestion for 'woman' should be: "Is the woman old?" For 'cat', it says the 'cat' is to the left of the 'woman', so this information is not considered. For 'cat', it says the 'cat' is in the 'box', however it considers another entity 'box', so this information is not considered. For 'cat', it says what color is the 'cat', so the subquestion for 'cat' should be: "What color is the cat?". For 'box', since there are no characteristics for the 'box' itself, the subquestion for the 'box' should be: "None, because there is no characteristic about 'box' itself.". Answer: {{"woman":["Is the woman old?"],"cat":["What color is the cat?"],'box':["None, because there is no characteristic about 'box' itself."]}}'''),
     ("ai", '''{{"woman":["None, because there is no characteristic about 'woman' itself."],"sweater":["Is the sweater long?"],"man":["Is the man old?","Where is the man talking?"],"door":["Where is the door?"]}}'''),
     ("human", '''The list of entities is: ['vegetable','plate']. The VQA question is "What is the vegetable on the round plate?".'''),
+    # ("ai", '''Thought:In the list ['man','dog','ground']. For 'man', there are no characteristics for the 'man' itself, so the subquestion for the 'man' should be: "None, because there is no characteristic about 'man' itself.". For 'dog', it says the 'dog' is black, so the subquestion for 'dog' should be: "Is the dog black?". For 'dog', it says the 'dog' is lying on the ground', however it considers another entity 'ground', so this information is not considered. For 'ground', there are no characteristics about the 'ground' itself, so the subquestion for the 'ground' should be: "None, because there is no characteristic about 'ground' itself.". Answer: {{"man":["None, because there is no characteristic about 'man' itself."],"dog":["Is the dog black?"],"ground":["None, because there is no characteristic about 'ground' itself."]}}'''),
     ("ai", '''{{"vegetable":["What type is the vegetable?","Where is the vegetable?"],"plate":["Is the plate round?","Where is the plate?"]}}'''),
     ("human", '''The list of entities is: ['child','van']. The VQA question is "What van is to the left of the child appearing to be standing?".'''),
     ("ai", '''{{"child":["Does the child appear to be standing?","Where is the child standing?"],"van":["What type is the van?","Where is the van"]}}'''),
     ("human", '''The list of entities is: ['person','jacket']. The VQA question is "Which direction is the person wearing a red jacket looking at?".'''),
     ("ai", '''{{"person":["Which direction is the person looking at?"],"jacket":["Is the jacket red?"]}}'''),
+    # ("ai", '''Thought: In the list ['child','van']. For 'child', it says the child appears to be standing, so the subquestion for 'child' should be: "Does the child appear to be standing?". For 'van', it says the 'van' is to the left of 'child', however it considers another entity 'child', so this information is not considered. For 'van', it says what is the 'van', the subquestion for the 'van' should be: "What is the van?". Answer: {{"child":["Is child appear to be standing?"],"van":["What is the van?"]}}'''),
 
     # ("human", '''The original dictionary is {{'person':[1,2],'shirt':[4,6]}}. The question is "Is the person [1,2] wearing a shirt [4,6]?" The answer is "Person [1] is wearing shirt [4]. Person [2] is not wearing shirt [6]." What is the update dictionary?'''),
     # ("ai", "Thought: Since the woman is talking with the man: ('woman','man'). Since the woman is in the sweater: ('woman','sweater'). Since it is asking if the man is next to the door: ('man','door'). Answer: [('woman','man'),('woman','sweater'),('man',door)]""),
-    ("human", '''The list of entities is: {entity_list}. The VQA question is "{question}". What are the subquestions for each entity in the list?'''),
+    ("human", '''The list of entities is: {entity_list}. The VQA question is "{question}".'''),
     ])
     nodequestions=[]
     def gene_nodequestions(all_node,question):
-        llm = ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0)#gpt-3.5-turbol
+        print('all_node',all_node)
+        if len(all_node)==0:
+            return {}
+        # llm = ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0)#gpt-3.5-turbol
+        llm=Tongyi(model_name="qwen-max",temperature=0)
         node_question=(nodequestion_generation_prompt2|llm|StrOutputParser()).invoke( {
             "entity_list":all_node,
             "question": question,
             })    
+        print('node_question',node_question)
         node_question=json.loads(node_question)
+        
         node_question=check_and_replace_questions(node_question,all_node)
         return node_question
     #分成了position question 和node question
@@ -299,6 +441,8 @@ def nodequestion_generation(all_nodes,questions,obj_dicts):
             sub_q2=question[1]
             sub_node1=all_node[0]
             sub_node2=all_node[1]
+            print(sub_node1)
+            print(sub_node2)
             if len(sub_node1)==1 and not sub_q1 in posi_q[sub_node1[0]]:
                 sub_node_q_dict1=gene_nodequestions(sub_node1,sub_q1)
             else:
@@ -325,14 +469,21 @@ def nodequestion_generation(all_nodes,questions,obj_dicts):
                 else:
                     sub_node_q_dict1[key] = value
             node_question=sub_node_q_dict1
-    
+        for k in all_node:
+            if isinstance(k,str):
+                if not k in node_question: node_question[k]=[f"None, because there is no characteristic about {k} itself."]
+            else:
+                for k_ in k:
+                    if not k_ in node_question: node_question[k_]=[f"None, because there is no characteristic about {k_} itself."]
+
         nodequestions.append(node_question)
     all_nodequestions=[]
+    
     for nodequestion,posi_q in zip(nodequestions,posi_qs):
         print('node_question,posi_q',node_question,posi_q)
         for key, values in posi_q.items():
             if len(values)!=0:  
-                if nodequestion[key] and nodequestion[key][0].startswith('None'): 
+                if key in nodequestion and nodequestion[key][0].startswith('None'): 
                     nodequestion[key] = values  
                 else:
                     if values not in nodequestion[key]:
@@ -341,10 +492,106 @@ def nodequestion_generation(all_nodes,questions,obj_dicts):
         all_nodequestions.append(nodequestion)
     # print(all_nodequestions)
     return all_nodequestions
+# def simplify_question(all_nodequestions,questions):
 
+#     simplify_question_prompt = ChatPromptTemplate.from_messages([
+#     ("system", '''AI assistant should help simplify the original question based on already exist sub-question dictionary. Since some sub-questions are already ask some information, the original question can be simplified without asking the already asked information, and it can even becomes a empty string. Next are a few examples for AI assistant. '''),
+#     ("human", '''The original question is "Is the old man who is talking with the woman in a long sweater next to the black door?". The sub-question dictionary is {{"sweater":["Is the sweater long?"],"man":["Is the man old?"],"door":["What color is the door?"]}}'''),
+#     ("ai", '''Is the man who is talking with the woman in a sweater next to the door?'''),
+    # ("human", '''The original question is "What is the vegetable on the round plate?". The sub-question dictionary is {{"vegetable":["What type is the vegetable?"],"plate":["Is the plate round?"]}}'''),
+    # # ("ai", '''Thought:In the list ['man','dog','ground']. For 'man', there are no characteristics for the 'man' itself, so the subquestion for the 'man' should be: "None, because there is no characteristic about 'man' itself.". For 'dog', it says the 'dog' is black, so the subquestion for 'dog' should be: "Is the dog black?". For 'dog', it says the 'dog' is lying on the ground', however it considers another entity 'ground', so this information is not considered. For 'ground', there are no characteristics about the 'ground' itself, so the subquestion for the 'ground' should be: "None, because there is no characteristic about 'ground' itself.". Answer: {{"man":["None, because there is no characteristic about 'man' itself."],"dog":["Is the dog black?"],"ground":["None, because there is no characteristic about 'ground' itself."]}}'''),
+    # ("ai", '''Is the vegetable on the plate?'''),
+    # ("human", '''The original question is "What van is to the left of the child appearing to be standing?". The sub-question dictionary is {{"child":["Does the child appear to be standing?"],"van":["What type is the van?"]}}'''),
+    # ("ai", '''Is the van to the left of the child'''),
+    # ("human", '''The original question is "Which direction is the person looking at?". The sub-question dictionary is {{"person":["Which direction is the person looking at?"]}}'''),
+    # ("ai", ''''''),
+    # ("human", '''The original question is "Is there an apple or a pear?". The sub-question dictionary is {{"apple":["Is there an apple?"],"pear":["Is there a pear?"]}}'''),
+    # ("ai", ''''''),
+    #  ("human", '''The original question is "{question}". The sub-question dictionary is {all_nodequestion}. '''),
+    # ])
+    # # posi_qs=[]
+    # for all_nodequestion,question in zip(all_nodequestions,questions):
+    #     print(all_nodequestion,question)
+    #     llm = ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0)#gpt-3.5-turbol
+    #     simplified_question=(simplify_question_prompt|llm|StrOutputParser()).invoke( {
+    #         "question": question,
+    #         "all_nodequestion":all_nodequestion ,
+    #         })
+    #     print('Original Qustion: ',question)
+    #     print('simplified_question: ',simplified_question)
 def edgequestion_generation(questions,extracted_list):
     print('=========generate edge============')
+    # file_path = "all_relationship_dict.txt"
+    # all_relationship_dict = []
+    # with open(file_path, "r") as file:
+    #     for line in file:
+    #         all_relationship_dict.append(json.loads(line.strip()))
 
+#整合Parent_children， Parallel
+    # all_combined_relation=[]
+    # for i in range(len(questions)):
+    #     relationship_dict=all_relationship_dict[i]
+    #     parent_children=relationship_dict['Parent_children']
+    #     combined_relation={}
+    #     # print(parent_children)
+    #     for small_pc in parent_children:
+    #         key,val=list(small_pc.items())[0]
+    #         combined_relation[key]=val
+    #     # print(combined_relation)
+    #     parallel=relationship_dict['Parallel']
+    #     # print(parallel)
+    #     for small_parallel in parallel:
+    #         key,val=list(small_parallel.items())[0]
+    #         if key in combined_relation:
+    #             combined_relation[key].append(val)
+    #         elif val in combined_relation:
+    #             combined_relation[val].append(key)
+    #         else:
+    #             combined_relation[key]=[val]
+    #     all_combined_relation.append(combined_relation)
+
+            #归纳关系
+    # prompt=ChatPromptTemplate.from_messages([
+    #     SystemMessage(content='''You are a clever AI assistant and you should help me analyze a VQA problem by figuring out the "edge_question" between two entities. I have a tuple of entities and an attached VQA question, and the entities are extracted from the question. 
+    #     You should figure out the "edge_question" between the entities in the tuple, according to the question provided.
+
+    #     Here are two examples:
+    #     The tuple of entities and the VQA question is: 
+    #     ('woman','sweater') Question: Is the man who is talking with the woman in red sweater next to the door?
+    #     Output:
+    #     <"Does the woman wear a sweater?">
+
+    #     The tuple of entities and the VQA question is: 
+    #     ('woman','man') Question: Is the man who is talking with the woman in red sweater next to the door?
+    #     Output:
+    #     <"Is the woman talking with a man?">
+
+    #     Now, help me with the following tuple of entities and the VQA question,  '''),
+    #     # MessagesPlaceholder(variable_name="context"),
+    #     MessagesPlaceholder(variable_name="input"),
+        
+    # ])
+    # # ans=(prompt|llm).invoke({"input":[entities_Qs[0]]})
+    # # print(ans)
+    # all_edgequestions=[]
+    # for i in range(len(all_relationship_dict)):
+    #     relationship_dict=all_relationship_dict[i]
+    #     # print(relationship_dict)
+    #     if(len(relationship_dict)==0):
+    #         all_edgequestions.append('None')
+    #         continue
+    #     llm = ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0)#gpt-3.5-turbol
+    #     # relationship_dict=json.dumps(relationship_dict)
+    #     edge_question={}
+    #     for k,vals in relationship_dict.items():
+    #         for val in vals:
+    #             # print((k,val))
+    #             input="The tuple of entities: "+str((k,val)) +" Question: "+questions[i]
+    #             ans=(prompt|llm).invoke({"input":[input]})
+    #             res="Edge questions: "+ans.content
+    #             # print(ans.content[1:-1])
+    #             edge_question[(k,val)]=ans.content[1:-1]
+    #     all_edgequestions.append(edge_question)
     relationship_checking_questions_prompt = ChatPromptTemplate.from_messages([
     ("system", '''You are a clever AI assistant and you should help me figuring out the relationship checking questions between two entities. I have a list of relationship tuples and an attached VQA question. Each relationship tuple has two entities, which are extracted from the question. 
             In a relationship tuple, I want to generate a relationship checking question according to the VQA question. You as a AI assistant must ensure your format as: "Thought: ... Answer: ...".Next are a few examples for you.'''),
@@ -372,7 +619,8 @@ def edgequestion_generation(questions,extracted_list):
     def gene_edge_rela( extracted_tuples,question):
         
         # print(extracted_list)
-        llm = ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0)#gpt-3.5-turbol
+        # llm = ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0)#gpt-3.5-turbol
+        llm=Tongyi(model_name="qwen-max",temperature=0)
         relationship_checking_questions=(relationship_checking_questions_prompt|llm|StrOutputParser()).invoke( {
             "relationship_tuples": extracted_tuples,
             "question": question,
@@ -523,7 +771,8 @@ def check_that_question(questions,all_nodes):
             check_that_questions.append(question)
             check_that_nodes.append(entity_list)
             continue
-        llm = ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0)#gpt-3.5-turbol
+        llm=Tongyi(model_name="qwen-max",temperature=0)
+        # llm = ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0)#gpt-3.5-turbol
         div_questions=(that_question_prompt(question)|llm|StrOutputParser()).invoke( {
         })
         div_questions=div_questions[1:-1].split(',')
@@ -590,5 +839,21 @@ if __name__=='__main__':
  'Is the purse pink and table white?',
  'Are there drawers to the left of the bed that is in front of the curtains?',
  'Which kind of animal is the child watching?'] # all_nodes,all_entities_question=entity_generation(questions)
- 
+    # print(all_nodes)
+    # print(all_entities_question)
+    # all_relationship_dict,extracted_lists=relationship_dict_generation(all_nodes,questions)
+    # print(all_relationship_dict)
+
+    # # print('all_entity_question',all_entities_question)
+    # # for relationship_dict in all_relationship_dict:
+    # #     # import pdb; pdb.set_trace()
+    # #     print(relationship_dict)
+    # all_nodequestions=nodequestion_generation(all_nodes,questions)
+    # print(all_nodequestions)
+    # all_edgequestions=edgequestion_generation(questions,extracted_lists)
+    # print(all_edgequestions)
+    # # print(all_combined_relation)
+    # # import pdb; pdb.set_trace()
+    # graphs=graph_generation(all_nodequestions,all_edgequestions,all_relationship_dict)
+    # print(graphs)
     main(questions)

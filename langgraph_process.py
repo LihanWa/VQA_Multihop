@@ -24,8 +24,9 @@ workflow.add_node("left_right_tool", call_left_right_tool)
 workflow.add_node("judge_obj_tool", call_judge_obj_tool)
 workflow.add_node("bottom_top_tool", call_bottom_top_tool)
 workflow.add_node("size_tool", call_size_tool)
+workflow.add_node("identity_tool", call_identity_tool)
 workflow.set_entry_point("agent")
-tools=["VQA_tool","left_right_tool","judge_obj_tool","bottom_top_tool","size_tool"]
+tools=["VQA_tool","left_right_tool","judge_obj_tool","bottom_top_tool","size_tool","identity_tool"]
 conditional_map = {k: k for k in tools}
 # conditional_map['FINISH'] = END
 # print(conditional_map)
@@ -67,6 +68,6 @@ def lang_graph(Image,node,question,context,question_type,label_sentence,axis_dic
                         # print("Answer from Langgraph",s['VQA_tool']['Tool_return'][0].content)
                         return s['judge_obj_tool']['Tool_return'][0].content,'judge_obj_tool'
                     if 'size_tool' in s:
-                        # print(s)
-                        # print("Answer from Langgraph",s['size_tool']['Tool_return'][0].content)
                         return s['size_tool']['Tool_return'][0].content,'size_tool'
+                    if 'identity_tool' in s:
+                        return s['identity_tool']['Tool_return'][0].content,'identity_tool'
