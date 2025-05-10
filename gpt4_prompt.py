@@ -7,7 +7,6 @@ import requests
 import sys
 
 import re
-os.environ["OPENAI_API_KEY"] = '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'
 api_key = os.getenv("OPENAI_API_KEY")
 
 #========== Functions for Gpt4 vqa tool=========
